@@ -1,5 +1,5 @@
 {
-  "name": "pg-faker",
+  "name": "pgfaker",
   "version": "1.0.0",
   "description": "Tool for dumping/exporting your postgres database's table data with custom masking rules.",
   "main": "./lib/src/index.js",
