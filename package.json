@@ -42,5 +42,9 @@
     "chalk": "^5.0.1",
     "commander": "^9.1.0",
     "tslib": "^2.3.1"
+  },
+  "repository": {
+    "url": "https://github.com/imanpalsingh/pg-faker.git",
+    "type": "git"
   }
 }
