@@ -1,0 +1,46 @@
+{
+  "name": "pg-faker",
+  "version": "1.0.0",
+  "description": "Tool for dumping/exporting your postgres database's table data with custom masking rules.",
+  "main": "./lib/src/index.js",
+  "type": "module",
+  "bugs": "https://github.com/imanpalsingh/pg-faker/issues",
+  "homepage": "https://github.com/imanpalsingh/pg-faker",
+  "keywords": [
+    "pg",
+    "anonymizer",
+    "mask",
+    "faker",
+    "pg-faker",
+    "database"
+  ],
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "build": "rm -rf lib && tsc -b",
+    "refresh": "tsc -b",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "bin": {
+    "pg-faker": "./lib/src/index.js"
+  },
+  "author": "Imanpal Singh",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
+    "@typescript-eslint/parser": "^5.16.0",
+    "eslint": "^8.12.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "typescript": "^4.6.3"
+  },
+  "types": "./lib/src/index.d.ts",
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "commander": "^9.1.0",
+    "tslib": "^2.3.1"
+  }
+}
