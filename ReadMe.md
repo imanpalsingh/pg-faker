@@ -5,7 +5,7 @@ Tool for dumping/exporting your postgres database's table data with custom maski
 ## Usage
 
 ```bash
-pg-faker [options] <config>
+pgfaker [options] <config>
 ```
 
 Currently available options are
@@ -19,7 +19,7 @@ Options:
 You can also use this with `npx`
 
 ```
-npx pg-faker config.js --output=dump.sql
+npx pgfaker config.js --output=dump.sql
 ```
 
 ## Configuration
@@ -77,7 +77,7 @@ You can go ahead and use something like [faker](https://www.npmjs.com/package/@f
 
 ## TroubleShooting
 
-If you are facing errors from `internal/process/esm_loader.js`. Do `npm install pg-faker` and then `npx pg-faker`.
+If you are facing errors from `internal/process/esm_loader.js`. Do `npm install pgfaker` and then `npx pgfaker`.
 For other issues, please raise an issue on [github](https://github.com/imanpalsingh/pg-faker/issues).
 
 ## Why?
