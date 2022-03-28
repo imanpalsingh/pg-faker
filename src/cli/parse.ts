@@ -13,13 +13,9 @@ class Parser {
   }
 
   verifyConfiguration() {
-    const { connectionUrl, defaultTransformer } = this.configuration;
+    const { connectionUrl } = this.configuration;
     if (!connectionUrl) {
       gracefulShutdown('connectionUrl is missing');
-    }
-
-    if (!defaultTransformer) {
-      gracefulShutdown('defaultTransformer  is missing');
     }
   }
 
@@ -44,10 +40,15 @@ class Parser {
   }
 
   applyTransform(value: string, table: string, column: string) {
+    const { defaultTransformer } = this.configuration;
     if (this.shouldTransform(table, column)) {
       const transformer = this.getTransformer((column));
       const changed = transformer(value);
       return changed;
+    }
+
+    if (!(defaultTransformer === null || defaultTransformer === undefined)) {
+      return defaultTransformer(value);
     }
 
     return value;
@@ -69,13 +70,10 @@ class Parser {
   }
 
   shouldTransform(table: string, column: string) {
-    if (this.isColumnMarked(column)) {
-      if (this.isTableMarked(table)) {
-        return this.isColumnMarkedInTable(column);
-      }
+    if (this.isColumnMarked(column) || this.isColumnMarkedInTable(column)) {
       return true;
     }
-    return this.isColumnMarkedInTable(column);
+    return false;
   }
 }
 
