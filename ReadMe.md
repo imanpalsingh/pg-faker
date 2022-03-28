@@ -71,6 +71,8 @@ export const configuration = {
 
   For `product` table, `description `column will get `This will be used`, and all other tables having `description` column will get `This will not be used`
 
+- `defaultTransformer`: if this is specified, then all of the columns not mentioned in the `columns` and `tables` will get this transformer. If this isn't specified, all of the undefined columns are left unchanged.
+
 You can go ahead and use something like [faker](https://www.npmjs.com/package/@faker-js/faker) or your own custom maskers for complex use cases.
 
 ## TroubleShooting
