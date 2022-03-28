@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
-    "declaration": true,
     "module": "esnext",
     "esModuleInterop": true,
     "target": "es5",
     "moduleResolution": "Node",
-    "sourceMap": true,
     "outDir": "lib",
     "strict": true,
     "importHelpers": true,
-    "declarationDir": "lib/types",
-    "declarationMap": true,
   },
   "exclude": [
     "node_modules",
