@@ -2,3 +2,4 @@ src/
 types/
 .eslintrc.cjs
 tsconfig.json
+*.sql
