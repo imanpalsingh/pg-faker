@@ -11,7 +11,7 @@
     "anonymizer",
     "mask",
     "faker",
-    "pg-faker",
+    "pgfaker",
     "database"
   ],
   "scripts": {
@@ -24,7 +24,7 @@
     "postversion": "git push && git push --tags"
   },
   "bin": {
-    "pg-faker": "./lib/src/index.js"
+    "pgfaker": "./lib/src/index.js"
   },
   "author": "Imanpal Singh",
   "license": "ISC",
