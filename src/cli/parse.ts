@@ -19,20 +19,17 @@ class Parser {
     }
   }
 
-  getTransformer(col: string): Transformer {
+  getTransformer(table: string, col: string): Transformer {
     /*
     Table specific column transformers are given higher precedence
     */
-
     const { tables, columns, defaultTransformer } = this.configuration;
 
-    const [specificTransformer] = Object.values(tables).filter((table) => col in table);
-
-    if (specificTransformer) {
-      return specificTransformer[col as keyof typeof specificTransformer] as Transformer;
+    if (this.isColumnMarkedInTable(table, col)) {
+      return tables[table][col];
     }
 
-    if (col in columns) {
+    if (this.isColumnMarked(col)) {
       return columns[col];
     }
 
@@ -40,15 +37,10 @@ class Parser {
   }
 
   applyTransform(value: string, table: string, column: string) {
-    const { defaultTransformer } = this.configuration;
-    if (this.shouldTransform(table, column)) {
-      const transformer = this.getTransformer((column));
-      const changed = transformer(value);
-      return changed;
-    }
+    const transformer = this.getTransformer(table, column);
 
-    if (!(defaultTransformer === null || defaultTransformer === undefined)) {
-      return defaultTransformer(value);
+    if (transformer) {
+      return transformer(value);
     }
 
     return value;
@@ -64,16 +56,9 @@ class Parser {
     return column in columns;
   }
 
-  isColumnMarkedInTable(column: string) {
+  isColumnMarkedInTable(table: string, column: string) {
     const { tables } = this.configuration;
-    return Object.values(tables).some((table) => column in table);
-  }
-
-  shouldTransform(table: string, column: string) {
-    if (this.isColumnMarked(column) || this.isColumnMarkedInTable(column)) {
-      return true;
-    }
-    return false;
+    return this.isTableMarked(table) ? column in tables[table] : false;
   }
 }
 
