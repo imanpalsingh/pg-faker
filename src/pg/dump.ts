@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import { gracefulShutdown } from '../utils/handlers.js';
 
 export function createPgDump(connectionUrl: string) {
-  const pg = spawn('pg_dump', [connectionUrl, '--data-only']);
+  const pg = spawn('pg_dump', [connectionUrl]);
 
   pg.on('exit', (code) => {
     if (code !== 0) {
