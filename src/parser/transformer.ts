@@ -1,14 +1,7 @@
 import {
-  ColumnTypes, OptionsType, TableTypes, TransformerType,
+  ColumnTypes, OptionsType, TableTypes, TransformerProps, TransformerType,
 } from '../../types/domain.js';
 import { Options } from './options.js';
-
-interface TransformerProps {
-  columns?: ColumnTypes,
-  tables?: TableTypes,
-  defaultTransformer?: TransformerType
-  options?: OptionsType
-}
 
 class Transformer {
   props: TransformerProps;

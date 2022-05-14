@@ -1,20 +1,8 @@
-import { ConfigurationType } from '../../types/domain.js';
+import { ConfigurationType, ParserFlags, ParserProps, QueryDataType } from '../../types/domain.js';
 import { DataQuery } from '../pg/queries/abstracts/data-query.js';
 import { InfraQuery } from '../pg/queries/abstracts/infra-query.js';
 import { Query } from '../pg/queries/abstracts/query.js';
 import { Transformer } from './transformer.js';
-
-type ParserProps = Pick<ConfigurationType, 'columns' | 'tables' | 'defaultTransformer' | 'options'>
-
-interface ParserFlags {
-  currentQuery: Query | null
-  queryDataInProgress: boolean
-}
-
-interface QueryDataType {
-  table: string;
-  columns: string[]
-}
 
 class Parser {
   configuration: ParserProps;
