@@ -1,8 +1,8 @@
-import { ConfigurationType, ParserFlags, ParserProps, QueryDataType } from '../../types/domain.js';
-import { DataQuery } from '../pg/queries/abstracts/data-query.js';
-import { InfraQuery } from '../pg/queries/abstracts/infra-query.js';
-import { Query } from '../pg/queries/abstracts/query.js';
-import { Transformer } from './transformer.js';
+import {ParserFlags, ParserProps, QueryDataType} from '../../types/domain.js';
+import {DataQuery} from '../pg/queries/abstracts/data-query.js';
+import {InfraQuery} from '../pg/queries/abstracts/infra-query.js';
+import {Query} from '../pg/queries/abstracts/query.js';
+import {Transformer} from './transformer.js';
 
 class Parser {
   configuration: ParserProps;
@@ -53,10 +53,11 @@ class Parser {
   parseData(data: string) {
     if (data.trim() && data !== '\\.') {
       return data.split('\t')
-        .map((value: string, index: number) => this.transformer.applyTransform(value, this.queryData!.table, this.queryData!.columns[index])).join('\t');
+          // eslint-disable-next-line max-len
+          .map((value: string, index: number) => this.transformer.applyTransform(value, this.queryData!.table, this.queryData!.columns[index])).join('\t');
     }
     return data;
   }
 }
 
-export { Parser };
+export {Parser};

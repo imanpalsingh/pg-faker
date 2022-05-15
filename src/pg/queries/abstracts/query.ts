@@ -7,7 +7,7 @@ class Query {
 
   constructor() {
     if (this.constructor === Query) {
-      throw new Error("Abstract class Query need can't be instantiated.");
+      throw new Error('Abstract class Query need can\'t be instantiated.');
     }
   }
 
@@ -20,4 +20,4 @@ class Query {
   }
 }
 
-export { Query };
+export {Query};

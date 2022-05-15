@@ -1,5 +1,5 @@
-import { spawn } from 'child_process';
-import { gracefulShutdown } from '../utils/handlers.js';
+import {spawn} from 'child_process';
+import {gracefulShutdown} from '../utils/handlers.js';
 
 export function createPgDump(connectionUrl: string) {
   const pg = spawn('pg_dump', [connectionUrl]);
