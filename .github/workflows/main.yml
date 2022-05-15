@@ -4,10 +4,6 @@ name: Linters and Tests
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches:
-      - "**"
   pull_request:
     branches:
       - "**"
@@ -33,8 +29,6 @@ jobs:
 
       - name: Check linting
         run: npm run lint
-        
+
       - name: Run Tests
         run: npm run test
-        
-        
