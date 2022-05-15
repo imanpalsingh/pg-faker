@@ -13,7 +13,7 @@ module.exports = {
   rules: {
     'require-jsdoc': 'off',
     'max-len': [
-      "error",
+      'error',
       {
         'code': 120,
       },
