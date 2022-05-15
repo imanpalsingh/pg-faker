@@ -1,4 +1,4 @@
-import { OptionsType } from '../../types/domain.js';
+import {OptionsType} from '../../types/domain.js';
 
 class Options {
   options?: OptionsType;
@@ -10,7 +10,7 @@ class Options {
   shouldSkipTable(table: string, condition: string) {
     if (!this.options) return false;
 
-    const { skip } = this.options;
+    const {skip} = this.options;
 
     if (table in skip) {
       return skip[table] === condition;
@@ -28,4 +28,4 @@ class Options {
   }
 }
 
-export { Options };
+export {Options};
