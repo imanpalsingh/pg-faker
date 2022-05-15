@@ -1,7 +1,7 @@
 import {
-  ColumnTypes, OptionsType, TableTypes, TransformerProps, TransformerType,
+  TransformerProps, TransformerType,
 } from '../../types/domain.js';
-import { Options } from './options.js';
+import {Options} from './options.js';
 
 class Transformer {
   props: TransformerProps;
@@ -26,21 +26,21 @@ class Transformer {
   }
 
   isTableMarked(table: string) {
-    const { tables } = this.props;
+    const {tables} = this.props;
     if (!tables) return false;
 
     return table in tables;
   }
 
   isColumnMarked(column: string) {
-    const { columns } = this.props;
+    const {columns} = this.props;
     if (!columns) return false;
 
     return column in columns;
   }
 
   isColumnMarkedInTable(table: string, column: string) {
-    const { tables } = this.props;
+    const {tables} = this.props;
     if (!tables) return false;
     return this.isTableMarked(table) ? column in tables[table] : false;
   }
@@ -58,4 +58,4 @@ class Transformer {
   }
 }
 
-export { Transformer };
+export {Transformer};

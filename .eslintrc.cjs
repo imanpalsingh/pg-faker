@@ -12,10 +12,10 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   rules: {
     'require-jsdoc': 'off',
-    'max-line-length': [
-      true,
+    'max-len': [
+      "error",
       {
-        'limit': 120,
+        'code': 120,
       },
     ],
   },

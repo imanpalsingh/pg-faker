@@ -1,4 +1,4 @@
-import { DataQuery } from './abstracts/data-query.js';
+import {DataQuery} from './abstracts/data-query.js';
 
 class Copy extends DataQuery {
   constructor() {
@@ -7,5 +7,5 @@ class Copy extends DataQuery {
     this.columnRegex = /^COPY (?:.*?) \((.*)\).*$/;
   }
 }
-export { Copy };
+export {Copy};
 export default new Copy();

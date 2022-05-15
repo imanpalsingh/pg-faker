@@ -1,4 +1,4 @@
-import { Query } from './abstracts/query.js';
+import {Query} from './abstracts/query.js';
 
 class CreateSequence extends Query {
   constructor() {
@@ -7,5 +7,5 @@ class CreateSequence extends Query {
   }
 }
 
-export { CreateSequence };
+export {CreateSequence};
 export default new CreateSequence();

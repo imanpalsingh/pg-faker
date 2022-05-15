@@ -1,10 +1,10 @@
-import { Query } from './query.js';
+import {Query} from './query.js';
 
 class InfraQuery extends Query {
   constructor() {
     super();
     if (this.constructor === InfraQuery) {
-      throw new Error("Abstract class InfraQuery need can't be instantiated.");
+      throw new Error('Abstract class InfraQuery need can\'t be instantiated.');
     }
   }
 
@@ -13,4 +13,4 @@ class InfraQuery extends Query {
   }
 }
 
-export { InfraQuery };
+export {InfraQuery};
