@@ -1,22 +1,17 @@
-import {createWriteStream} from 'fs';
-import {join} from 'path'; import {createInterface} from 'readline';
+import {join} from 'path';
 import {ConfigurationType} from '../../types/domain.js';
 import {Parser} from '../parser/parse.js';
 import {createPgDump} from '../pg/dump.js';
 import {PgExtractor} from '../pg/extractors.js';
+import {createInputStream, createOutputStream} from '../utils/io.js';
 
 export async function cli(config: string, args: { [arg: string]: string }) {
   const importPath = join(process.cwd(), config);
   const {configuration}: { configuration: ConfigurationType } = await import(importPath);
-
   const pgDump = createPgDump(configuration.connectionUrl);
+  const inputStream = createInputStream(pgDump.stdout);
+  const outputStream: any = createOutputStream(args.output);
 
-  const inputStream = createInterface({
-    input: pgDump.stdout,
-    crlfDelay: Infinity,
-  }) as any as Iterable<string>;
-
-  const outputStream = createWriteStream(args.output);
   let canWriteToFile = true;
   const parser = new Parser(configuration);
 
