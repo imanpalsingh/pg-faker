@@ -4,6 +4,7 @@ import {Parser} from '../parser/parse.js';
 import {createPgDump} from '../pg/dump.js';
 import {PgExtractor} from '../pg/extractors.js';
 import {createInputStream, createOutputStream} from '../utils/io.js';
+import {Logger} from '../utils/loggers/abstracts/Logger.js';
 
 export async function cli(config: string, args: { [arg: string]: string }) {
   const importPath = join(process.cwd(), config);
@@ -13,8 +14,10 @@ export async function cli(config: string, args: { [arg: string]: string }) {
   const outputStream: any = createOutputStream(args.output);
 
   let canWriteToFile = true;
-  const parser = new Parser(configuration);
+  const log = new Logger(args.verbose);
+  const parser = new Parser(configuration, log);
 
+  log.start(args.output);
   for await (let line of inputStream) {
     if (PgExtractor.isAComment(line)) {
       canWriteToFile = false;
@@ -36,4 +39,5 @@ export async function cli(config: string, args: { [arg: string]: string }) {
 
     if (canWriteToFile) outputStream.write(`${line}\n`);
   }
+  log.complete();
 }
