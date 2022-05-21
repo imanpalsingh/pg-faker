@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {Query} from '../src/pg/queries/abstracts/query';
 
 // eslint-disable-next-line no-unused-vars
@@ -49,5 +50,11 @@ export interface TransformerProps {
   tables?: TableTypes,
   defaultTransformer?: TransformerType
   options?: OptionsType
+}
+
+export enum VerbosityLevel{
+  verbose,
+  info,
+  silent,
 }
 

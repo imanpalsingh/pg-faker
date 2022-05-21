@@ -13,14 +13,34 @@ Currently available options are
 ```
 Options:
   -o --output <outFile>  STDOUT or name of the output sql file (default: "dump.sql")
+  -v --verbose <mode> verbosity - verbose | info | silent
   -h, --help             display help for command
 ```
 
 You can also use this with `npx`
 
+```sh
+$ npx pgfaker config.js --output=STDOUT
 ```
-npx pgfaker config.js --output=STDOUT
-```
+
+## Options
+
+- `--output`: Use it to either write to file or stdout.
+
+  Examples:
+  ```
+  $ npx pgfaker config.js --output=STDOUT | psql database_url
+  $ npx pgfaker config.js --output=dump.sql
+  ```
+  Defualt: `dump.sql`
+  
+- `--verbose`: This is used to control the verbosity level of logging from `pgfaker`
+  - `silent` : No output at all, only runtime errors.
+  - `info`: Basic information during the dump process such as current table, start and finish prompts etc.
+  - `verbose`: All possible information during the dump process. This includes, everything from `info` plus columns that were skipped, transformed and more.
+
+  Default: `verbose`
+
 
 ## Configuration
 
