@@ -1,4 +1,4 @@
-# PG-Faker
+# PGFaker
 
 Tool for dumping/exporting your postgres database's table data with custom masking rules.
 
@@ -12,14 +12,14 @@ Currently available options are
 
 ```
 Options:
-  -o --output <outFile>  Name of the output sql file (default: "dump.sql")
+  -o --output <outFile>  STDOUT or name of the output sql file (default: "dump.sql")
   -h, --help             display help for command
 ```
 
 You can also use this with `npx`
 
 ```
-npx pgfaker config.js --output=dump.sql
+npx pgfaker config.js --output=STDOUT
 ```
 
 ## Configuration
