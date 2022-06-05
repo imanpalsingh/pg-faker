@@ -11,7 +11,9 @@ export function createInputStream(stream: any) {
 
 export function createOutputStream(stream: string) {
   if (stream === 'STDOUT') {
-    return stdout;
+    const outStream: any = stdout;
+    outStream._handle.setBlocking(true);
+    return outStream;
   }
   return createWriteStream(stream);
 }
