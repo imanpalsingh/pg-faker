@@ -8,10 +8,22 @@ import {Query} from './queries/abstracts/query.js';
 import sequenceSet from './queries/sequence-set.js';
 import setQ from './queries/set-q.js';
 import select from './queries/select.js';
+import createIndex from './queries/create-index.js';
 
 class PgExtractor {
   // eslint-disable-next-line max-len
-  static queries = [alterSequence, alterTableSequence, alterTable, copy, createSequence, createTable, sequenceSet, setQ, select];
+  static queries = [
+    alterSequence,
+    alterTableSequence,
+    alterTable,
+    copy,
+    createSequence,
+    createTable,
+    sequenceSet,
+    setQ,
+    select,
+    createIndex,
+  ];
 
   static parseLine(line: string): Query | null {
     const queryObj = this.queries.find((query) => query.match(line));
@@ -23,7 +35,7 @@ class PgExtractor {
   }
 
   static isAComment(line: string) {
-    return line.match(/--.*/g);
+    return line.match(/^--.*/g);
   }
 }
 
