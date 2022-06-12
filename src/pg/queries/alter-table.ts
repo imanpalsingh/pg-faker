@@ -3,7 +3,7 @@ import {Query} from './abstracts/query.js';
 class AlterTable extends Query {
   constructor() {
     super();
-    this.regex = /^ALTER TABLE.*\.(.*?)(?: .*|$)/;
+    this.regex = /^ALTER TABLE.*\.(.*?[^;])(?:$| .*)/;
   }
 }
 
