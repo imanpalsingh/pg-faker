@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <td align="left">
-        :information_source: Version 2.0 with additional features is now in beta! <a href="https://www.npmjs.com/package/pgfaker/v/2.0.0-beta-0"> Try here </a>
+        :information_source: Version 2.0 with additional features is now in beta! <a href="https://www.npmjs.com/package/pgfaker/v/2.0.0-beta.1"> Try here </a>
       </td>
     </tr>
   </thead>
