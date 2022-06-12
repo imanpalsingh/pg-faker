@@ -18,5 +18,7 @@ module.exports = {
         'code': 120,
       },
     ],
+    // Let prettier handle it
+    'indent': 'off',
   },
 };
