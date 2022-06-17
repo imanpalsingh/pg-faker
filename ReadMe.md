@@ -1,15 +1,4 @@
-<table>
-  <thead>
-    <tr>
-      <td align="left">
-        :information_source: Version 2.0 with additional features is now in beta! <a href="https://www.npmjs.com/package/pgfaker/v/2.0.0-beta.1"> Try here </a>
-      </td>
-    </tr>
-  </thead>
-  </tbody>
-</table>
-
-# PG-Faker
+# PGFaker
 
 Tool for dumping/exporting your postgres database's table data with custom masking rules.
 
@@ -23,15 +12,35 @@ Currently available options are
 
 ```
 Options:
-  -o --output <outFile>  Name of the output sql file (default: "dump.sql")
+  -o --output <outFile>  STDOUT or name of the output sql file (default: "dump.sql")
+  -v --verbose <mode> verbosity - verbose | info | silent
   -h, --help             display help for command
 ```
 
 You can also use this with `npx`
 
+```sh
+$ npx pgfaker config.js --output=STDOUT
 ```
-npx pgfaker config.js --output=dump.sql
-```
+
+## Options
+
+- `--output`: Use it to either write to file or stdout.
+
+  Examples:
+  ```
+  $ npx pgfaker config.js --output=STDOUT | psql database_url
+  $ npx pgfaker config.js --output=dump.sql
+  ```
+  Defualt: `dump.sql`
+  
+- `--verbose`: This is used to control the verbosity level of logging from `pgfaker`
+  - `silent` : No output at all, only runtime errors.
+  - `info`: Basic information during the dump process such as current table, start and finish prompts etc.
+  - `verbose`: All possible information during the dump process. This includes, everything from `info` plus columns that were skipped, transformed and more.
+
+  Default: `verbose`
+
 
 ## Configuration
 
@@ -51,11 +60,17 @@ export const configuration = {
       columnName: (value) => /* do something */ return value
   },
 
+  options:{
+    skip:{
+      tableName: 'output' | 'mask'
+    }
+  }
+
   defaultTransformer: (value) => value,
 };
 ```
 
-### Options
+### Properties
 
 - `connectionUrl`: The connection to your db
 
@@ -84,13 +99,40 @@ export const configuration = {
 
 - `defaultTransformer`: if this is specified, then all of the columns not mentioned in the `columns` and `tables` will get this transformer. If this isn't specified, all of the undefined columns are left unchanged.
 
-You can go ahead and use something like [faker](https://www.npmjs.com/package/@faker-js/faker) or your own custom maskers for complex use cases.
+  You can go ahead and use something like [faker](https://www.npmjs.com/package/@faker-js/faker) or your own custom maskers for complex use cases.
+
+- `options`: Additional options for the parser
+
+  - `skip`: This property defines which table to either exclude from being masked or from being written to the output. This option accepts either 'mask' or 'output'
+
+    - `mask`
+
+      ```js
+      options: {
+        skip: {
+          blogs: 'mask';
+        }
+      }
+      ```
+
+      will make sure that the dumped sql doesn't have data masked for blogs table. This will override any other masking rules specified for this table.
+
+    - `output`
+
+      ```js
+      options: {
+        skip: {
+          users: 'output';
+        }
+      }
+      ```
+
+      will make sure that the dumped sql doesn't have any queries related to users table. This will override any other masking rules specified for this table.
 
 ## TroubleShooting
 
-If you are facing errors from `internal/process/esm_loader.js`. Do `npm install pgfaker` and then `npx pgfaker`.
-For other issues, please raise an issue on [github](https://github.com/imanpalsingh/pg-faker/issues).
+Please refer and raise the issues on [github](https://github.com/imanpalsingh/pg-faker/issues).
 
 ## Why?
 
-I was in search of a pg-anonymizer and found this nice package [`pg-anonymizer`](https://github.com/rap2hpoutre/pg-anonymizer). However, I found the api of the package not very useful for my specific use case. Also, I required some additional features such as more flexibility in choosing data-maskers, skipping tables, skipping columns and also dumping just the data.
+I was in search of a anonymizer for postgres and came across [`pg-anonymizer`](https://github.com/rap2hpoutre/pg-anonymizer). This was not suitable for my requirement as it was lacking a flexible api and additional options, so I ended up creating my own version of anonymizer with inspiration from the package.

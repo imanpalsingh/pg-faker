@@ -3,3 +3,6 @@ types/
 .eslintrc.cjs
 tsconfig.json
 *.sql
+jest.config.js
+.github
+coverage

@@ -3,25 +3,22 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    'airbnb-base',
-  ],
+  extends: ['google'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: [
-    '@typescript-eslint',
-  ],
+  plugins: ['@typescript-eslint'],
   rules: {
-    'no-console': 'off',
-    'import/no-dynamic-require': 'off',
-    'global-require': 'off',
-    'import/prefer-default-export': 'off',
-    'import/extensions': 'off',
-    'import/no-unresolved': 'off',
-    'no-restricted-syntax': 'off',
+    'require-jsdoc': 'off',
+    'max-len': [
+      'error',
+      {
+        'code': 120,
+      },
+    ],
+    // Let prettier handle it
+    'indent': 'off',
   },
-  ignorePatterns: ['**/*.js'],
 };

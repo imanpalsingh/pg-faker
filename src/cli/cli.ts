@@ -1,57 +1,43 @@
-import { createInterface } from 'readline';
-import { join } from 'path';
-import { createWriteStream } from 'fs';
-import { createPgDump } from '../pg/dump.js';
-import { info, success } from '../utils/loggers.js';
-import { ConfigurationType } from '../../types/configuration.js';
-import { Parser } from './parse.js';
-import { PgExtractors } from '../pg/extracters.js';
-import { gracefulShutdown } from '../utils/handlers.js';
+import {join} from 'path';
+import {ConfigurationType} from '../../types/domain.js';
+import {Parser} from '../parser/parse.js';
+import {createPgDump} from '../pg/dump.js';
+import {PgExtractor} from '../pg/extractors.js';
+import {createInputStream, createOutputStream} from '../utils/io.js';
+import {Logger} from '../utils/loggers/abstracts/Logger.js';
 
 export async function cli(config: string, args: { [arg: string]: string }) {
   const importPath = join(process.cwd(), config);
-  const { configuration }: { configuration: ConfigurationType } = await import(importPath);
+  const {configuration}: { configuration: ConfigurationType } = await import(importPath);
+  const pgDump = createPgDump(configuration.connectionUrl);
+  const inputStream = createInputStream(pgDump.stdout);
+  const outputStream: any = createOutputStream(args.output);
 
-  const parser = new Parser(configuration);
-  parser.verifyConfiguration();
-  const pg = createPgDump(parser.connectionUrl);
+  let canWriteToFile = true;
+  const log = new Logger(args.verbose);
+  const parser = new Parser(configuration, log);
 
-  info(`Starting dump > ${args.output}`);
+  log.start(args.output);
+  for await (let line of inputStream) {
+    if (PgExtractor.isAComment(line)) {
+      canWriteToFile = false;
+    } else {
+      const query = PgExtractor.parseLine(line);
 
-  const inputLineResults = createInterface({
-    input: pg.stdout,
-    crlfDelay: Infinity,
-  }) as any as Iterable<string>;
-  const out = createWriteStream(args.output);
-
-  let table: string | null = null;
-  let cols: string[] = [];
-
-  for await (let line of inputLineResults) {
-    const data = new PgExtractors(line);
-
-    try {
-      if (data.isCopyQuery()) {
-        table = data.getTableName();
-        cols = data.getCols();
-        /*
-          Actual data is on the next line of pg_dump
-        */
-      } else if (table && cols.length && line.trim() && (line !== '\\.')) {
-        line = line
-          .split('\t')
-          // eslint-disable-next-line no-loop-func
-          .map((value, index) => parser.applyTransform(value, table as string, cols[index]))
-          .join('\t');
-      } else {
-        table = null;
-        cols = [];
+      if (query) {
+        parser.reset();
+        canWriteToFile = true;
+        if (parser.shouldExecute(query)) {
+          parser.parseQuery(query);
+        } else {
+          canWriteToFile = false;
+        }
+      } else if (parser.flags.queryDataInProgress) {
+        line = parser.parseData(line);
       }
-
-      out.write(`${line}\n`);
-    } catch (e) {
-      gracefulShutdown(e as string);
     }
+
+    if (canWriteToFile) outputStream.write(`${line}\n`);
   }
-  success(`Dump Completed : ${args.output}`);
+  log.complete();
 }

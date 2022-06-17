@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "esnext",
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "es6",
     "moduleResolution": "Node",
     "outDir": "lib",
     "strict": true,
@@ -10,6 +10,7 @@
   },
   "exclude": [
     "node_modules",
-    "lib"
+    "lib",
+    "**/__tests__"
   ]
 }
