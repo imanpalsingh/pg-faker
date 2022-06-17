@@ -1,15 +1,4 @@
-<table>
-  <thead>
-    <tr>
-      <td align="left">
-        :information_source: Version 2.0 with additional features is now in beta! <a href="https://www.npmjs.com/package/pgfaker/v/2.0.0-beta.1"> Try here </a>
-      </td>
-    </tr>
-  </thead>
-  </tbody>
-</table>
-
-# PG-Faker
+# PGFaker
 
 Tool for dumping/exporting your postgres database's table data with custom masking rules.
 
@@ -23,14 +12,14 @@ Currently available options are
 
 ```
 Options:
-  -o --output <outFile>  Name of the output sql file (default: "dump.sql")
+  -o --output <outFile>  STDOUT or name of the output sql file (default: "dump.sql")
   -h, --help             display help for command
 ```
 
 You can also use this with `npx`
 
 ```
-npx pgfaker config.js --output=dump.sql
+npx pgfaker config.js --output=STDOUT
 ```
 
 ## Configuration
@@ -94,31 +83,34 @@ export const configuration = {
 
 - `options`: Additional options for the parser
 
-   - `skip`: This property defines which table to either exclude from being masked or from being written to the output. This option accepts either 'mask' or 'output'
+  - `skip`: This property defines which table to either exclude from being masked or from being written to the output. This option accepts either 'mask' or 'output'
 
-      - `mask`
+    - `mask`
 
-        ```js
-        options: {
-          skip: {
-            blogs: 'mask'
-          }
+      ```js
+      options: {
+        skip: {
+          blogs: 'mask';
         }
-        ```
-         will make sure that the dumped sql doesn't have data masked for blogs table. This will override any other masking rules specified for this table.
+      }
+      ```
 
-      - `output`
+      will make sure that the dumped sql doesn't have data masked for blogs table. This will override any other masking rules specified for this table.
 
-        ```js
-          options: {
-            skip: {
-              users: 'output'
-            }
-          }
-        ```
-        will make sure that the dumped sql doesn't have any queries related to users table. This will override any other masking rules specified for this table.
+    - `output`
+
+      ```js
+      options: {
+        skip: {
+          users: 'output';
+        }
+      }
+      ```
+
+      will make sure that the dumped sql doesn't have any queries related to users table. This will override any other masking rules specified for this table.
 
 ## TroubleShooting
+
 Please refer and raise the issues on [github](https://github.com/imanpalsingh/pg-faker/issues).
 
 ## Why?
