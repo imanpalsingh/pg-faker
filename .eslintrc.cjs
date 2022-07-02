@@ -21,4 +21,5 @@ module.exports = {
     // Let prettier handle it
     'indent': 'off',
   },
+  ignorePatterns: ['*.d.ts'],
 };
