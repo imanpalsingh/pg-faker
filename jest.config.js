@@ -7,11 +7,11 @@ export default {
   coveragePathIgnorePatterns: ['node_modules', 'src/types'],
   globals: {
     'ts-jest': {
-      diagnostics: false
-    }
+      diagnostics: false,
+    },
   },
   transform: {},
   moduleNameMapper: {
-    "(.*).js$": "$1",
-  }
+    '(.*).js$': '$1',
+  },
 };
