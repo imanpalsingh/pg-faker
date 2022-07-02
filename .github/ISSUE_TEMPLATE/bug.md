@@ -1,14 +1,14 @@
 # **🐞 Bug Report**
 
 ## **Describe the bug**
+
 <!-- A clear and concise description of what the bug is. -->
 
-*
-
----
+- ***
 
 ### **Is this a regression?**
-<!-- Did this behaviour used to work in the previous version? -->
+
+<!-- Did this behavior used to work in the previous version? -->
 <!-- Yes, the previous version in which this bug was not present was: ... -->
 
 ---
@@ -31,26 +31,25 @@
 
 ---
 
-### **Expected behaviour**
+### **Expected behavior**
+
 <!-- A clear and concise description of what you expected to happen. -->
 
-*
-
----
-
+- ***
 
 ### **Your environment**
 
 <!-- use all the applicable bulleted list element for this specific issue,
 and remove all the bulleted list elements that are not relevant for this issue. -->
 
-* OS:
-* Node version:
-* Postgres Version:
+- OS:
+- Node version:
+- Postgres Version:
 
 ---
 
 ### **Additional context**
+
 <!-- Add any other context or additional information about the problem here.-->
 
-*
+-
