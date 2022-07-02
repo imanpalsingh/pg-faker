@@ -1,5 +1,9 @@
 # PGFaker
 
+[![Linters and Tests](https://github.com/imanpalsingh/pg-faker/actions/workflows/main.yml/badge.svg?label=build)](https://github.com/imanpalsingh/pg-faker/actions/workflows/main.yml?query=branch%3Amain)
+[![CodeQ](https://github.com/imanpalsingh/pg-faker/actions/workflows/codeql.yml/badge.svg)](https://github.com/imanpalsingh/pg-faker/actions/workflows/codeql.yml?query=branch%3Amain)
+[![npm version](https://badge.fury.io/js/pgfaker.svg)](https://www.npmjs.com/package/pgfaker)
+
 Tool for dumping/exporting your postgres database's table data with custom masking rules.
 
 ## Usage
@@ -28,19 +32,21 @@ $ npx pgfaker config.js --output=STDOUT
 - `--output`: Use it to either write to file or stdout.
 
   Examples:
+
   ```
   $ npx pgfaker config.js --output=STDOUT | psql database_url
   $ npx pgfaker config.js --output=dump.sql
   ```
+
   Defualt: `dump.sql`
-  
+
 - `--verbose`: This is used to control the verbosity level of logging from `pgfaker`
+
   - `silent` : No output at all, only runtime errors.
   - `info`: Basic information during the dump process such as current table, start and finish prompts etc.
   - `verbose`: All possible information during the dump process. This includes, everything from `info` plus columns that were skipped, transformed and more.
 
   Default: `verbose`
-
 
 ## Configuration
 
@@ -58,6 +64,7 @@ export const configuration = {
   tables: {
     tableName: {
       columnName: (value) => /* do something */ return value
+    }
   },
 
   options:{
@@ -80,19 +87,18 @@ export const configuration = {
 
   ```js
   export const configuration = {
-
-    connectionUrl: "postgresql://USER:PASSWORD@HOST:PORT/DATABASE",
+    connectionUrl: 'postgresql://USER:PASSWORD@HOST:PORT/DATABASE',
 
     columns: {
-      description: (value) => "This will not be used"
+      description: (value) => 'This will not be used',
     },
 
     tables: {
       product: {
-        description: (value) => "This will be used"
+        description: (value) => 'This will be used',
+      },
     },
   };
-
   ```
 
   For `product` table, `description `column will get `This will be used`, and all other tables having `description` column will get `This will not be used`
