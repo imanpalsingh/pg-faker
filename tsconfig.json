@@ -7,6 +7,9 @@
     "outDir": "lib",
     "strict": true,
     "importHelpers": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true
   },
   "exclude": [
     "node_modules",
