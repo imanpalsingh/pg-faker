@@ -4,12 +4,12 @@ import {
   ExecuterCache,
   VerbosityLevel,
   WriteableStream,
-} from '../../types/domain';
+} from '../../types/domain.js';
 import {queries} from '../pg/queries';
-import {DataQuery} from '../pg/queries/abstracts/data-query';
-import {InfraQuery} from '../pg/queries/abstracts/infra-query';
-import {Query} from '../pg/queries/abstracts/query';
-import {Logger} from '../utils/loggers/logger';
+import {DataQuery} from '../pg/queries/abstracts/data-query.js';
+import {InfraQuery} from '../pg/queries/abstracts/infra-query.js';
+import {Query} from '../pg/queries/abstracts/query.js';
+import {Logger} from '../utils/loggers/logger.js';
 
 class Executer {
   queries!: Array<Query>;

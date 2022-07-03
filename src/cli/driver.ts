@@ -1,10 +1,10 @@
 import {join} from 'path';
-import {ConfigurationType, WriteableStream} from '../../types/domain';
-import parser from '../parser/parser';
-import {createPgDump} from '../pg/dump';
-import {createInputStream, createOutputStream} from '../utils/io';
-import {Logger} from '../utils/loggers/logger';
-import executer from './executer';
+import {ConfigurationType, WriteableStream} from '../../types/domain.js';
+import parser from '../parser/parser.js';
+import {createPgDump} from '../pg/dump.js';
+import {createInputStream, createOutputStream} from '../utils/io.js';
+import {Logger} from '../utils/loggers/logger.js';
+import executer from './executer.js';
 
 class Driver {
   async loadConfiguration(path: string) {

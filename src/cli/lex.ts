@@ -1,5 +1,5 @@
 import {Command} from 'commander';
-import driver from './driver';
+import driver from './driver.js';
 
 const command = new Command();
 
