@@ -41,7 +41,10 @@ export enum VerbosityLevel {
 }
 
 export interface AbstractOperationType {
-  aoo: __TableOperationType;
+  aoo: {
+    tables?: __TableOperationType;
+    columns?: ColumnTypes;
+  };
   flags: {
     optimizeQuerySearch: boolean;
   };
