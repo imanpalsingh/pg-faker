@@ -1,21 +1,24 @@
 import {columnConfiguration} from './columns';
 
-const configuration = {
-  columns: columnConfiguration.raw.columns,
-  tables: {
-    ...columnConfiguration.raw.tables,
+export function optionsColumnsConfiguration() {
+  const {raw, parsed} = columnConfiguration();
+  const configuration = {
+    columns: raw.columns,
+    tables: {
+      ...raw.tables,
+      posts: 'SKIP:OUTPUT' as const,
+      users: 'SKIP:MASK' as const,
+    },
+  };
+
+  const configurationParsed = {
+    ...parsed,
     posts: 'SKIP:OUTPUT' as const,
     users: 'SKIP:MASK' as const,
-  },
-};
+  };
 
-const configurationParsed = {
-  ...columnConfiguration.parsed,
-  posts: 'SKIP:OUTPUT' as const,
-  users: 'SKIP:MASK' as const,
-};
-
-export const optionsColumnsConfiguration = {
-  raw: configuration,
-  parsed: configurationParsed,
-};
+  return {
+    raw: configuration,
+    parsed: configurationParsed,
+  };
+}

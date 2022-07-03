@@ -2,29 +2,33 @@ import {ConfigurationType} from '../../types/domain';
 import {columnConfiguration} from './columns';
 import {optionsConfiguration} from './options';
 
-const configurationRaw: ConfigurationType = {
-  connectionUrl: 'postgres://somewhere',
+export function completeConfiguration() {
+  const {raw: columnRaw} = columnConfiguration();
+  const {raw: optionsRaw, parsed: optionsParsed} = optionsConfiguration();
+  const configurationRaw: ConfigurationType = {
+    connectionUrl: 'postgres://somewhere',
 
-  columns: columnConfiguration.raw.columns,
-  tables: {
-    users: columnConfiguration.raw.tables.users,
-    comments: optionsConfiguration.raw.tables.comments,
-  },
-  options: optionsConfiguration.raw.options,
-};
+    columns: columnRaw.columns,
+    tables: {
+      users: columnRaw.tables.users,
+      comments: optionsRaw.tables.comments,
+    },
+    options: optionsRaw.options,
+  };
 
-const expectedTables = {
-  users: optionsConfiguration.parsed.users,
-  comments: {...columnConfiguration.raw.columns, ...configurationRaw.tables?.comments},
-  posts: optionsConfiguration.parsed.posts,
-};
+  const expectedTables = {
+    users: optionsParsed.users,
+    comments: {...columnRaw.columns, ...configurationRaw.tables?.comments},
+    posts: optionsParsed.posts,
+  };
 
-const configurationParsed = {
-  aoo: {...expectedTables},
-  flags: {optimizeQuerySearch: false},
-};
+  const configurationParsed = {
+    aoo: {...expectedTables},
+    flags: {optimizeQuerySearch: false},
+  };
 
-export const completeConfiguration = {
-  raw: configurationRaw,
-  parsed: configurationParsed,
-};
+  return {
+    raw: configurationRaw,
+    parsed: configurationParsed,
+  };
+}
