@@ -6,7 +6,7 @@ import {
   __TableOperationType,
 } from '../../types/domain.js';
 import {gracefulShutdown} from '../utils/handlers.js';
-import {Logger} from '../utils/loggers/logger.js';
+import {Logger} from '../utils/logger.js';
 
 class Parser {
   validate(configuration: ConfigurationType) {

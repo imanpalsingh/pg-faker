@@ -1,4 +1,4 @@
-import {Logger} from './loggers/logger.js';
+import {Logger} from './logger.js';
 
 export function gracefulShutdown(message: string, code?: any) {
   Logger.error(message);

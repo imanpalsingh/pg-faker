@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import {VerbosityLevel} from '../../../types/domain.js';
+import {VerbosityLevel} from '../../types/domain.js';
 
 class Logger {
   verbosityLevel: VerbosityLevel;
