@@ -1,8 +1,6 @@
 import {
   AbstractOperationType,
-  ColumnTypes,
   ConfigurationType,
-  Operation,
   OptionsType,
   TableTypes,
   __TableOperationType,
@@ -11,7 +9,14 @@ import {gracefulShutdown} from '../utils/handlers.js';
 import {Logger} from '../utils/loggers/logger.js';
 
 class Parser {
-  #defineTableOperations(tables: TableTypes, options: OptionsType) {
+  validate(configuration: ConfigurationType) {
+    if (!configuration.connectionUrl) {
+      gracefulShutdown('connectionUrl is missing, cannot connect to database without it');
+      return;
+    }
+  }
+
+  parseOptions(tables: TableTypes, options: OptionsType) {
     /*
     Each option is an operation that the parser has to identify.
   */
@@ -44,48 +49,15 @@ class Parser {
     return parsedTables;
   }
 
-  validate(configuration: ConfigurationType) {
-    if (!configuration.connectionUrl) {
-      gracefulShutdown('connectionUrl is missing, cannot connect to database without it');
-      return;
-    }
-  }
-
-  parseOptions(tables: TableTypes, options?: OptionsType) {
-    if (options) {
-      return this.#defineTableOperations(tables, options);
-    } else {
-      return tables;
-    }
-  }
-
-  parseColumns(tables: TableTypes | __TableOperationType, columns?: ColumnTypes) {
-    if (!columns) return tables;
-
-    const parsedTables: __TableOperationType = {};
-
-    for (const [key, value] of Object.entries(tables)) {
-      let task: Operation | ColumnTypes;
-
-      if (typeof value === 'string') {
-        task = value as Operation;
-      } else {
-        task = Object.assign(columns, value);
-      }
-
-      parsedTables[key as keyof typeof parsedTables] = task;
-    }
-
-    return parsedTables;
-  }
-
   parse(configuration: ConfigurationType): AbstractOperationType {
-    const {tables = {}, columns, options} = configuration;
-    let parsedPayload: __TableOperationType;
+    const {tables, columns, options} = configuration;
+    let parsedTables: TableTypes | __TableOperationType | undefined = tables;
 
     this.validate(configuration);
-    parsedPayload = this.parseOptions(tables, options);
-    parsedPayload = this.parseColumns(parsedPayload, columns);
+
+    if (options) {
+      parsedTables = this.parseOptions(tables ?? {}, options);
+    }
 
     /*
         Queries are now matched with regex. Queries other than DataQuery are not required
@@ -93,7 +65,10 @@ class Parser {
     */
 
     return {
-      aoo: parsedPayload,
+      aoo: {
+        ...(parsedTables && {tables: parsedTables}),
+        ...(columns && {columns: columns}),
+      },
       flags: {
         optimizeQuerySearch: !options,
       },
