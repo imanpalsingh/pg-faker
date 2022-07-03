@@ -8,7 +8,7 @@ import {
   __TableOperationType,
 } from '../../types/domain.js';
 import {gracefulShutdown} from '../utils/handlers.js';
-import {Logger} from '../utils/loggers/logger';
+import {Logger} from '../utils/loggers/logger.js';
 
 class Parser {
   #defineTableOperations(tables: TableTypes, options: OptionsType) {
@@ -45,7 +45,7 @@ class Parser {
   }
 
   validate(configuration: ConfigurationType) {
-    if (configuration.connectionUrl) {
+    if (!configuration.connectionUrl) {
       gracefulShutdown('connectionUrl is missing, cannot connect to database without it');
       return;
     }
@@ -95,7 +95,7 @@ class Parser {
     return {
       aoo: parsedPayload,
       flags: {
-        optimizeQuerySearch: !!options,
+        optimizeQuerySearch: !options,
       },
     };
   }
