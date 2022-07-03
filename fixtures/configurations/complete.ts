@@ -1,29 +1,31 @@
-import {ConfigurationType} from '../../types/domain';
+import {AbstractOperationType, ConfigurationType} from '../../types/domain';
 import {columnConfiguration} from './columns';
-import {optionsConfiguration} from './options';
+import {optionConfiguration} from './options';
+import {tableConfiguration} from './tables';
 
 export function completeConfiguration() {
-  const {raw: columnRaw} = columnConfiguration();
-  const {raw: optionsRaw, parsed: optionsParsed} = optionsConfiguration();
+  const columns = columnConfiguration();
+  const options = optionConfiguration();
+  const tables = tableConfiguration();
+
   const configurationRaw: ConfigurationType = {
     connectionUrl: 'postgres://somewhere',
-
-    columns: columnRaw.columns,
-    tables: {
-      users: columnRaw.tables.users,
-      comments: optionsRaw.tables.comments,
-    },
-    options: optionsRaw.options,
+    columns,
+    tables,
+    options,
   };
 
-  const expectedTables = {
-    users: optionsParsed.users,
-    comments: {...columnRaw.columns, ...configurationRaw.tables?.comments},
-    posts: optionsParsed.posts,
+  const expectedAoo: AbstractOperationType['aoo'] = {
+    tables: {
+      ...configurationRaw.tables,
+      posts: 'SKIP:OUTPUT',
+      users: 'SKIP:MASK',
+    },
+    columns: configurationRaw.columns,
   };
 
   const configurationParsed = {
-    aoo: {...expectedTables},
+    aoo: expectedAoo,
     flags: {optimizeQuerySearch: false},
   };
 
