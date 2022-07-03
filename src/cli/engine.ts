@@ -2,6 +2,7 @@ import {
   AbstractOperationType,
   ColumnTypes,
   ExecuterCache,
+  Operation,
   VerbosityLevel,
   WriteableStream,
 } from '../../types/domain.js';
@@ -11,7 +12,7 @@ import {InfraQuery} from '../pg/queries/abstracts/infra-query.js';
 import {Query} from '../pg/queries/abstracts/query.js';
 import {Logger} from '../utils/loggers/logger.js';
 
-class Executer {
+class Engine {
   queries!: Array<Query>;
   aoo!: AbstractOperationType['aoo'];
   logger!: Logger;
@@ -19,11 +20,11 @@ class Executer {
   cache!: ExecuterCache | null;
 
   shouldSkipMasking(tableName: string) {
-    return this.aoo[tableName] === 'SKIP:MASK';
+    return this.aoo.tables![tableName] === 'SKIP:MASK';
   }
 
   shouldSkipOutput(tableName: string) {
-    return this.aoo[tableName] === 'SKIP:OUTPUT';
+    return this.aoo.tables![tableName] === 'SKIP:OUTPUT';
   }
 
   setUpQueries(payload: AbstractOperationType) {
@@ -73,6 +74,18 @@ class Executer {
     return true;
   }
 
+  requiredTransformers(operations: ColumnTypes) {
+    if (this.shouldSkipMasking(this.cache!.tableName)) {
+      this.logger.skipTableFromMasking(this.cache!.tableName);
+      return null;
+    } else {
+      return this.cache!.columns!.filter((key: string) => operations.hasOwnProperty(key)).reduce(
+        (subset: ColumnTypes, key) => ((subset[key] = (operations as ColumnTypes)[key]), subset),
+        {},
+      );
+    }
+  }
+
   apply(query: Query) {
     this.cache = {tableName: query.tableName};
 
@@ -81,47 +94,34 @@ class Executer {
     if (query instanceof DataQuery) {
       this.logger.currentTable(query.tableName);
       this.cache.columns = query.columns;
-      const operations = this.aoo[this.cache.tableName];
+      let operations: Operation | ColumnTypes;
 
-      if (!(operations instanceof String)) {
-        /*
-            If actual transformers are given for the table and not options
-        */
+      if (this.aoo.tables) {
+        operations = this.aoo.tables[this.cache.tableName];
 
-        const columnsInTable = this.cache.columns;
-        let transformers: ColumnTypes | null;
-
-        /*
-            Extracting the table specific transformers early
-        */
-
-        if (this.shouldSkipMasking(this.cache.tableName)) {
-          this.logger.skipTableFromMasking(this.cache.tableName);
-          transformers = null;
-        } else {
-          transformers = columnsInTable
-            .filter((key: string) => operations.hasOwnProperty(key))
-            .reduce(
-              (subset: ColumnTypes, key) => (
-                (subset[key] = (operations as ColumnTypes)[key]), subset
-              ),
-              {},
-            );
-        }
-
-        this.cache.transformers = transformers;
-
-        if (this.logger.verbosityLevel < VerbosityLevel.silent) {
+        if (!(operations instanceof String)) {
           /*
+            If actual transformers are given for the table and not options
+          */
+
+          operations = {...(operations as ColumnTypes), ...this.aoo.columns};
+
+          this.cache.transformers = this.requiredTransformers(operations);
+        }
+      } else if (this.aoo.columns) {
+        this.cache.transformers = this.requiredTransformers(this.aoo.columns);
+      }
+
+      if (this.logger.verbosityLevel < VerbosityLevel.silent) {
+        /*
               Do not do this computation if not asked for
           */
 
-          if (!transformers) {
-            this.logger.nothingTransformed();
-          }
-
-          const affectedColumns = Object.keys(transformers!);
-          const unaffectedColumns = columnsInTable.filter(
+        if (!this.cache.transformers) {
+          this.logger.nothingTransformed();
+        } else {
+          const affectedColumns = Object.keys(this.cache.transformers);
+          const unaffectedColumns = this.cache.columns.filter(
             (column) => !affectedColumns.includes(column),
           );
 
@@ -184,5 +184,5 @@ class Executer {
   }
 }
 
-export {Executer};
-export default new Executer();
+export {Engine};
+export default new Engine();
