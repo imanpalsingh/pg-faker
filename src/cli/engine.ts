@@ -6,11 +6,12 @@ import {
   VerbosityLevel,
   WriteableStream,
 } from '../../types/domain.js';
-import {queries} from '../pg/queries';
+import {queries} from '../pg/queries/index.js';
 import {DataQuery} from '../pg/queries/abstracts/data-query.js';
 import {InfraQuery} from '../pg/queries/abstracts/infra-query.js';
 import {Query} from '../pg/queries/abstracts/query.js';
-import {Logger} from '../utils/loggers/logger.js';
+import {Logger} from '../utils/logger.js';
+import {isEmptyObject} from '../utils/checkers.js';
 
 class Engine {
   queries!: Array<Query>;
@@ -79,10 +80,14 @@ class Engine {
       this.logger.skipTableFromMasking(this.cache!.tableName);
       return null;
     } else {
-      return this.cache!.columns!.filter((key: string) => operations.hasOwnProperty(key)).reduce(
+      const transformers = this.cache!.columns!.filter((key: string) =>
+        operations.hasOwnProperty(key),
+      ).reduce(
         (subset: ColumnTypes, key) => ((subset[key] = (operations as ColumnTypes)[key]), subset),
         {},
       );
+
+      return isEmptyObject(transformers) ? null : transformers;
     }
   }
 
@@ -116,7 +121,6 @@ class Engine {
         /*
               Do not do this computation if not asked for
           */
-
         if (!this.cache.transformers) {
           this.logger.nothingTransformed();
         } else {
