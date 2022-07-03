@@ -2,9 +2,9 @@ import {join} from 'path';
 import {ConfigurationType, WriteableStream} from '../../types/domain.js';
 import parser from '../parser/parser.js';
 import {createPgDump} from '../pg/dump.js';
-import {gracefulShutdown} from '../utils/handlers';
+import {gracefulShutdown} from '../utils/handlers.js';
 import {createInputStream, createOutputStream} from '../utils/io.js';
-import {Logger} from '../utils/loggers/logger.js';
+import {Logger} from '../utils/logger.js';
 import engine from './engine.js';
 
 class Driver {
@@ -36,7 +36,7 @@ class Driver {
     };
   }
 
-  async run(config: string, args: {[arg: string]: string}) {
+  run = async (config: string, args: {[arg: string]: string}) => {
     const logger = new Logger(args.verbose);
     const configuration = await this.loadConfiguration(config);
 
@@ -47,10 +47,10 @@ class Driver {
     const streams = this.createIOStreams(configuration.connectionUrl, args.output);
 
     logger.startDump(args.output);
-    engine.execute(payload, streams.input, streams.output, logger);
+    await engine.execute(payload, streams.input, streams.output, logger);
 
     logger.complete();
-  }
+  };
 }
 
 export {Driver};
