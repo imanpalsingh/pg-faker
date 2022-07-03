@@ -1,7 +1,7 @@
 import {
   AbstractOperationType,
   ColumnTypes,
-  ExecuterCache,
+  EngineCache,
   Operation,
   VerbosityLevel,
   WriteableStream,
@@ -17,7 +17,7 @@ class Engine {
   aoo!: AbstractOperationType['aoo'];
   logger!: Logger;
 
-  cache!: ExecuterCache | null;
+  cache!: EngineCache | null;
 
   shouldSkipMasking(tableName: string) {
     return this.aoo.tables![tableName] === 'SKIP:MASK';

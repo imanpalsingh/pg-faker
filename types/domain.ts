@@ -54,7 +54,7 @@ export interface WriteableStream {
   write: (text: string) => void;
 }
 
-export interface ExecuterCache {
+export interface EngineCache {
   tableName: string;
   columns?: Array<string>;
   transformers?: ColumnTypes | null;
