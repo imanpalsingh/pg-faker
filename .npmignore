@@ -7,5 +7,6 @@ tsconfig.json
 coverage/
 fixtures/
 .github/
+.husky/
 src/
 types/
