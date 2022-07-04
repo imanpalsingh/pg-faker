@@ -9,11 +9,12 @@
     "importHelpers": true,
     "sourceMap": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
   },
   "exclude": [
     "node_modules",
     "lib",
-    "**/__tests__"
+    "**/__tests__",
+    "fixtures"
   ]
 }
