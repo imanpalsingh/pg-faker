@@ -29,7 +29,7 @@
   "author": "Imanpal Singh",
   "license": "ISC",
   "devDependencies": {
-    "@types/jest": "^27.5.1",
+    "@types/jest": "^28.1.4",
     "@types/node": "^18.0.3",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
