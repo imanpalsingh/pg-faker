@@ -44,9 +44,7 @@ export interface AbstractOperationType {
   aoo: {
     tables?: __TableOperationType;
     columns?: ColumnTypes;
-  };
-  flags: {
-    optimizeQuerySearch: boolean;
+    defaultTransformer?: TransformerType;
   };
 }
 
