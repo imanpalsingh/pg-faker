@@ -33,9 +33,6 @@ describe('Parser', () => {
     };
     const expectedAoo: AbstractOperationType = {
       aoo: {tables: optionParsed()},
-      flags: {
-        optimizeQuerySearch: false,
-      },
     };
 
     const aoo = parser.parse(configuration);
@@ -51,9 +48,6 @@ describe('Parser', () => {
     };
     const expectedAoo: AbstractOperationType = {
       aoo: {columns: configuration.columns},
-      flags: {
-        optimizeQuerySearch: true,
-      },
     };
 
     const aoo = parser.parse(configuration);
@@ -69,9 +63,21 @@ describe('Parser', () => {
     };
     const expectedAoo: AbstractOperationType = {
       aoo: {tables: configuration.tables},
-      flags: {
-        optimizeQuerySearch: true,
-      },
+    };
+
+    const aoo = parser.parse(configuration);
+
+    expect(aoo).toEqual(expectedAoo);
+  });
+
+  it('returns correct abstraction object if only default transformer is defined ', () => {
+    const parser = new Parser();
+    const configuration: ConfigurationType = {
+      ...configWithUrl(),
+      defaultTransformer: (val: string) => val,
+    };
+    const expectedAoo: AbstractOperationType = {
+      aoo: {defaultTransformer: configuration.defaultTransformer},
     };
 
     const aoo = parser.parse(configuration);

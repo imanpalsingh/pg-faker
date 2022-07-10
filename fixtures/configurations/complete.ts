@@ -26,7 +26,6 @@ export function completeConfiguration() {
 
   const configurationParsed = {
     aoo: expectedAoo,
-    flags: {optimizeQuerySearch: false},
   };
 
   return {

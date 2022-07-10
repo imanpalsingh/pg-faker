@@ -15,8 +15,5 @@ export function configWithUrl() {
 export function emptyAOO(): AbstractOperationType {
   return {
     aoo: {},
-    flags: {
-      optimizeQuerySearch: true,
-    },
   };
 }

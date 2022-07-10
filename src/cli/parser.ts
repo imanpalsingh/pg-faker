@@ -50,7 +50,7 @@ class Parser {
   }
 
   parse(configuration: ConfigurationType): AbstractOperationType {
-    const {tables, columns, options} = configuration;
+    const {tables, columns, options, defaultTransformer} = configuration;
     let parsedTables: TableTypes | __TableOperationType | undefined = tables;
 
     this.validate(configuration);
@@ -59,18 +59,11 @@ class Parser {
       parsedTables = this.parseOptions(tables ?? {}, options);
     }
 
-    /*
-        Queries are now matched with regex. Queries other than DataQuery are not required
-        unless options are used. This can be used to speed up the execution
-    */
-
     return {
       aoo: {
         ...(parsedTables && {tables: parsedTables}),
         ...(columns && {columns: columns}),
-      },
-      flags: {
-        optimizeQuerySearch: !options,
+        ...(defaultTransformer && {defaultTransformer: defaultTransformer}),
       },
     };
   }
