@@ -38,7 +38,7 @@ class Logger {
   }
 
   skipTableFromMasking(table: string) {
-    this.#log(`\nSkipped masking rules for: ${chalk.yellow(table)}`, VerbosityLevel.info);
+    this.#log(`Skipping masking rules for: ${chalk.yellow(table)}`, VerbosityLevel.info);
   }
 
   skippedColumns(columns: string[]) {
