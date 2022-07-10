@@ -26,7 +26,7 @@ class Logger {
   }
 
   complete() {
-    this.#log(chalk.blue(`Dump Complete`), VerbosityLevel.info);
+    this.#log(chalk.blue(`\nDump Complete`), VerbosityLevel.info);
   }
 
   currentTable(tableName: string) {
