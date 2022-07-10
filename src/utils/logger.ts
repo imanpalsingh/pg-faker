@@ -26,7 +26,7 @@ class Logger {
   }
 
   complete() {
-    this.#log(chalk.blue(`Dump Complete`), VerbosityLevel.info);
+    this.#log(chalk.blue(`\nDump Complete`), VerbosityLevel.info);
   }
 
   currentTable(tableName: string) {
@@ -38,7 +38,7 @@ class Logger {
   }
 
   skipTableFromMasking(table: string) {
-    this.#log(`\nSkipped masking rules for: ${chalk.yellow(table)}`, VerbosityLevel.info);
+    this.#log(`Skipping masking rules for: ${chalk.yellow(table)}`, VerbosityLevel.info);
   }
 
   skippedColumns(columns: string[]) {

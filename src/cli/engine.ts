@@ -21,27 +21,23 @@ class Engine {
   cache!: EngineCache | null;
 
   shouldSkipMasking(tableName: string) {
-    return this.aoo.tables![tableName] === 'SKIP:MASK';
+    if (this.aoo.tables) {
+      return this.aoo.tables[tableName] === 'SKIP:MASK';
+    }
+
+    return false;
   }
 
   shouldSkipOutput(tableName: string) {
-    return this.aoo.tables![tableName] === 'SKIP:OUTPUT';
+    if (this.aoo.tables) {
+      return this.aoo.tables[tableName] === 'SKIP:OUTPUT';
+    }
+    return false;
   }
 
   setUpQueries(payload: AbstractOperationType) {
     this.aoo = payload.aoo;
-
-    if (payload.flags.optimizeQuerySearch) {
-      /*
-      This means that options feature was not used.
-      The query search can be optimized by not including non DataQuery queries
-      as they are required only when using options
-    */
-
-      this.queries = queries.filter((query) => query instanceof DataQuery);
-    } else {
-      this.queries = queries;
-    }
+    this.queries = queries;
   }
 
   isAComment(line: string) {
@@ -129,8 +125,8 @@ class Engine {
             (column) => !affectedColumns.includes(column),
           );
 
-          this.logger.transformedColumns(affectedColumns);
           this.logger.skippedColumns(unaffectedColumns);
+          this.logger.transformedColumns(affectedColumns);
         }
       }
     }
@@ -139,16 +135,18 @@ class Engine {
   }
 
   transform(line: string) {
-    if (!this.cache?.transformers) return line;
+    if (!(this.cache?.transformers || this.aoo.defaultTransformer)) return line;
     if (!line.trim() || line === `\\.`) return line;
 
     const record = line.split('\t');
-    const transformers = this.cache.transformers;
-    const columns = this.cache.columns;
+    const transformers = this.cache?.transformers;
+    const columns = this.cache?.columns;
 
     const maskedData = record.map((value: String, index) => {
-      if (transformers.hasOwnProperty(columns![index])) {
+      if (transformers?.hasOwnProperty(columns![index])) {
         return transformers[columns![index]](value);
+      } else if (this.aoo.defaultTransformer) {
+        return this.aoo.defaultTransformer(value);
       }
       return value;
     });
