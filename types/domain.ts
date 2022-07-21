@@ -4,16 +4,20 @@ import {Query} from '../src/pg/queries/abstracts/query';
 // eslint-disable-next-line no-unused-vars
 export type TransformerType = (value: any) => any;
 
+export type CommonTransformerType = (records: string[], columns: string[]) => string[];
+
 export type Operation = 'SKIP:MASK' | 'SKIP:OUTPUT';
 
 export interface TableTypes {
-  [table_name: string]: {
-    [column_name: string]: TransformerType;
-  };
+  [table_name: string]:
+    | {
+        [column_name: string]: TransformerType;
+      }
+    | TransformerType;
 }
 
 export interface __TableOperationType {
-  [table_name: string]: Operation | ColumnTypes;
+  [table_name: string]: Operation | ColumnTypes | CommonTransformerType;
 }
 
 export interface ColumnTypes {
@@ -55,5 +59,5 @@ export interface WriteableStream {
 export interface EngineCache {
   tableName: string;
   columns?: Array<string>;
-  transformers?: ColumnTypes | null;
+  transformers?: ColumnTypes | CommonTransformerType | null;
 }
