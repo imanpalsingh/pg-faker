@@ -1,6 +1,7 @@
 import {
   AbstractOperationType,
   ColumnTypes,
+  CommonTransformerType,
   EngineCache,
   Operation,
   VerbosityLevel,
@@ -95,7 +96,7 @@ class Engine {
     if (query instanceof DataQuery) {
       this.logger.currentTable(query.tableName);
       this.cache.columns = query.columns;
-      let operations: Operation | ColumnTypes;
+      let operations: Operation | ColumnTypes | CommonTransformerType;
 
       if (this.aoo.tables) {
         operations = this.aoo.tables[this.cache.tableName];
@@ -105,9 +106,18 @@ class Engine {
             If actual transformers are given for the table and not options
           */
 
-          operations = {...(operations as ColumnTypes), ...this.aoo.columns};
+          if (typeof operations !== 'function') {
+            /*
+                If object of transformers is passed, include the common
+                column transformers for lookup as well.
+                This is not required in case of one transformer being passed for
+                entire table because that transformer will receive
+                entire row as an array
+            */
 
-          this.cache.transformers = this.requiredTransformers(operations);
+            operations = {...(operations as ColumnTypes), ...this.aoo.columns};
+            this.cache.transformers = this.requiredTransformers(operations);
+          }
         }
       } else if (this.aoo.columns) {
         this.cache.transformers = this.requiredTransformers(this.aoo.columns);
@@ -141,15 +151,31 @@ class Engine {
     const record = line.split('\t');
     const transformers = this.cache?.transformers;
     const columns = this.cache?.columns;
+    let maskedData: string[];
 
-    const maskedData = record.map((value: String, index) => {
-      if (transformers?.hasOwnProperty(columns![index])) {
-        return transformers[columns![index]](value);
-      } else if (this.aoo.defaultTransformer) {
-        return this.aoo.defaultTransformer(value);
-      }
-      return value;
-    });
+    if (typeof transformers === 'object') {
+      maskedData = record.map((value: String, index) => {
+        if (transformers?.hasOwnProperty(columns![index])) {
+          const currentColumn = columns![index];
+          const action = transformers[currentColumn];
+
+          if (typeof action === 'function') {
+            return transformers[currentColumn](value);
+          } else {
+            throw new Error(
+              `Invalid transformer provided for column ${currentColumn} of table ${this.cache?.tableName}.`,
+            );
+          }
+        } else if (this.aoo.defaultTransformer) {
+          return this.aoo.defaultTransformer(value);
+        }
+        return value;
+      });
+    } else if (typeof transformers === 'function') {
+      maskedData = transformers(record, columns!);
+    } else {
+      throw new Error(`Invalid transformer provided for ${this.cache?.tableName} `);
+    }
 
     return maskedData.join(`\t`);
   }
