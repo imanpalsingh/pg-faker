@@ -4,7 +4,9 @@ import {Query} from '../src/pg/queries/abstracts/query';
 // eslint-disable-next-line no-unused-vars
 export type TransformerType = (value: any) => any;
 
-export type CommonTransformerType = (records: string[], columns: string[]) => string[];
+export type Middleware = (records: string[], columns: string[]) => string[];
+
+export type ExecuterInstructions = [Middleware, ColumnTypes];
 
 export type Operation = 'SKIP:MASK' | 'SKIP:OUTPUT';
 
@@ -13,11 +15,11 @@ export interface TableTypes {
     | {
         [column_name: string]: TransformerType;
       }
-    | TransformerType;
+    | ExecuterInstructions;
 }
 
 export interface __TableOperationType {
-  [table_name: string]: Operation | ColumnTypes | CommonTransformerType;
+  [table_name: string]: Operation | ColumnTypes | ExecuterInstructions;
 }
 
 export interface ColumnTypes {
@@ -59,5 +61,5 @@ export interface WriteableStream {
 export interface EngineCache {
   tableName: string;
   columns?: Array<string>;
-  transformers?: ColumnTypes | CommonTransformerType | null;
+  transformers?: ColumnTypes | ExecuterInstructions | null;
 }
