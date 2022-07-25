@@ -137,13 +137,11 @@ export const configuration = {
 
 ## Advanced
 
-If you need more flexibility with masking, such as conditional masking you can use middleware.
+If you need more flexibility with masking, such as conditional masking then you can use middleware.
 
 ### Middleware
 
-Middleware in pgfaker allows you to access the record that is about to get transformed. You can modify the records here, or avoid the masking that is about to happen.
-
-The api looks like this
+Middleware in pgfaker allows you to access the record that is about to get transformed. You can modify the records here, or avoid the masking that is about to happen. The api looks like this
 
 ```js
 export const configuration = {
@@ -168,7 +166,7 @@ Where `checkIfAdmin` is your middleware function and `maskingRules` is your regu
      adminColumnIndex = columnNames.indexOf('admin');
      isAdmin = columnValues[adminColumnIndex];
 
-     if (isAdmin === 1) {
+     if (isAdmin === '1') {
        return null;
      }
      return columnValues;
