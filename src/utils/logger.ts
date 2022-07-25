@@ -54,7 +54,7 @@ class Logger {
   }
 
   static error(value: string) {
-    console.error(chalk.red(`ERROR: ${value}`));
+    console.error(chalk.red(`${value}`));
   }
 
   static warn(value: string) {
