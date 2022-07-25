@@ -96,6 +96,7 @@ class Engine {
       this.logger.currentTable(query.tableName);
       this.cache.columns = query.columns;
       let tableOperations = this.aoo.tables?.[this.cache.tableName];
+
       if (Array.isArray(tableOperations)) {
         const [middleware, transforms] = tableOperations;
         this.cache.transformers = [middleware, {...transforms, ...this.aoo.columns}];
