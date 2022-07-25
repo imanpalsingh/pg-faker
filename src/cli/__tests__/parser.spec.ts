@@ -12,11 +12,11 @@ import {AbstractOperationType, ConfigurationType} from '../../../types/domain';
 import {Parser} from '../parser';
 
 describe('Parser', () => {
-  it('exits the process if connectionUrl is missing', () => {
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+  it('throws error if connectionUrl is missing', () => {
     const parser = new Parser();
-    parser.parse(minimalConfiguration());
-    expect(mockExit).toBeCalled();
+    expect(() => {
+      parser.parse(minimalConfiguration());
+    }).toThrowError();
   });
 
   it('returns empty abstraction object if no  rule are defined in configuration ', () => {
