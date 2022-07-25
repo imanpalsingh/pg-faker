@@ -1,9 +1,8 @@
 import {
   AbstractOperationType,
   ColumnTypes,
-  CommonTransformerType,
   EngineCache,
-  Operation,
+  ExecuterInstructions,
   VerbosityLevel,
   WriteableStream,
 } from '../../types/domain.js';
@@ -21,7 +20,7 @@ class Engine {
 
   cache!: EngineCache | null;
 
-  shouldSkipMasking(tableName: string) {
+  #shouldSkipMasking(tableName: string) {
     if (this.aoo.tables) {
       return this.aoo.tables[tableName] === 'SKIP:MASK';
     }
@@ -29,23 +28,23 @@ class Engine {
     return false;
   }
 
-  shouldSkipOutput(tableName: string) {
+  #shouldSkipOutput(tableName: string) {
     if (this.aoo.tables) {
       return this.aoo.tables[tableName] === 'SKIP:OUTPUT';
     }
     return false;
   }
 
-  setUpQueries(payload: AbstractOperationType) {
+  #setUpQueries(payload: AbstractOperationType) {
     this.aoo = payload.aoo;
     this.queries = queries;
   }
 
-  isAComment(line: string) {
+  #isAComment(line: string) {
     return line.match(/^--.*/g);
   }
 
-  parseLine(line: string) {
+  #parseLine(line: string) {
     const queryObj = this.queries.find((query) => query.match(line));
     if (queryObj) {
       queryObj.query = line;
@@ -55,7 +54,7 @@ class Engine {
     return null;
   }
 
-  canExecute(query: Query): boolean {
+  #canExecute(query: Query): boolean {
     if (query instanceof InfraQuery) return true;
 
     /*
@@ -64,7 +63,7 @@ class Engine {
 
     const tableName = query.tableName;
 
-    if (this.shouldSkipOutput(tableName)) {
+    if (this.#shouldSkipOutput(tableName)) {
       this.logger.skipTableFromOutput(tableName);
       return false;
     }
@@ -72,8 +71,8 @@ class Engine {
     return true;
   }
 
-  requiredTransformers(operations: ColumnTypes) {
-    if (this.shouldSkipMasking(this.cache!.tableName)) {
+  #requiredTransformers(operations: ColumnTypes) {
+    if (this.#shouldSkipMasking(this.cache!.tableName)) {
       this.logger.skipTableFromMasking(this.cache!.tableName);
       return null;
     } else {
@@ -88,49 +87,36 @@ class Engine {
     }
   }
 
-  apply(query: Query) {
+  #apply(query: Query) {
     this.cache = {tableName: query.tableName};
 
-    if (!this.canExecute(query)) return false;
+    if (!this.#canExecute(query)) return false;
 
     if (query instanceof DataQuery) {
       this.logger.currentTable(query.tableName);
       this.cache.columns = query.columns;
-      let operations: Operation | ColumnTypes | CommonTransformerType;
-
-      if (this.aoo.tables) {
-        operations = this.aoo.tables[this.cache.tableName];
-
-        if (!(operations instanceof String)) {
-          /*
-            If actual transformers are given for the table and not options
-          */
-
-          if (typeof operations !== 'function') {
-            /*
-                If object of transformers is passed, include the common
-                column transformers for lookup as well.
-                This is not required in case of one transformer being passed for
-                entire table because that transformer will receive
-                entire row as an array
-            */
-
-            operations = {...(operations as ColumnTypes), ...this.aoo.columns};
-            this.cache.transformers = this.requiredTransformers(operations);
-          }
-        }
-      } else if (this.aoo.columns) {
-        this.cache.transformers = this.requiredTransformers(this.aoo.columns);
+      let tableOperations = this.aoo.tables?.[this.cache.tableName];
+      if (Array.isArray(tableOperations)) {
+        const [middleware, transforms] = tableOperations;
+        this.cache.transformers = [middleware, {...transforms, ...this.aoo.columns}];
+      } else {
+        tableOperations = {...(tableOperations as ColumnTypes), ...this.aoo.columns};
+        this.cache.transformers = this.#requiredTransformers(tableOperations);
       }
 
       if (this.logger.verbosityLevel < VerbosityLevel.silent) {
         /*
               Do not do this computation if not asked for
           */
-        if (!this.cache.transformers) {
+
+        let transformers = this.cache.transformers;
+        if (!transformers) {
           this.logger.nothingTransformed();
         } else {
-          const affectedColumns = Object.keys(this.cache.transformers);
+          if (Array.isArray(transformers)) {
+            [, transformers] = transformers as ExecuterInstructions;
+          }
+          const affectedColumns = Object.keys(transformers);
           const unaffectedColumns = this.cache.columns.filter(
             (column) => !affectedColumns.includes(column),
           );
@@ -144,7 +130,7 @@ class Engine {
     return true;
   }
 
-  transform(line: string) {
+  #transform(line: string) {
     if (!(this.cache?.transformers || this.aoo.defaultTransformer)) return line;
     if (!line.trim() || line === `\\.`) return line;
 
@@ -153,31 +139,36 @@ class Engine {
     const columns = this.cache?.columns;
     let maskedData: string[];
 
-    if (typeof transformers === 'object') {
-      maskedData = record.map((value: String, index) => {
-        if (transformers?.hasOwnProperty(columns![index])) {
-          const currentColumn = columns![index];
-          const action = transformers[currentColumn];
-
-          if (typeof action === 'function') {
-            return transformers[currentColumn](value);
-          } else {
-            throw new Error(
-              `Invalid transformer provided for column ${currentColumn} of table ${this.cache?.tableName}.`,
-            );
-          }
-        } else if (this.aoo.defaultTransformer) {
-          return this.aoo.defaultTransformer(value);
-        }
-        return value;
-      });
-    } else if (typeof transformers === 'function') {
-      maskedData = transformers(record, columns!);
+    if (Array.isArray(transformers)) {
+      const [middleware, mapping] = transformers;
+      const passedRecord = middleware(record, columns!);
+      maskedData = this.#declarativeTransformation(passedRecord, mapping);
     } else {
-      throw new Error(`Invalid transformer provided for ${this.cache?.tableName} `);
+      maskedData = this.#declarativeTransformation(record, transformers!);
     }
 
     return maskedData.join(`\t`);
+  }
+
+  #declarativeTransformation(record: string[], transformers: ColumnTypes): string[] {
+    const columns = this.cache?.columns;
+    return record.map((value: String, index: number) => {
+      if (transformers?.hasOwnProperty(columns![index])) {
+        const currentColumn = columns![index];
+        const action = transformers[currentColumn];
+
+        if (typeof action === 'function') {
+          return transformers[currentColumn](value);
+        } else {
+          throw new Error(
+            `Invalid transformer provided for column ${currentColumn} of table ${this.cache?.tableName}.`,
+          );
+        }
+      } else if (this.aoo.defaultTransformer) {
+        return this.aoo.defaultTransformer(value);
+      }
+      return value;
+    });
   }
 
   async execute(
@@ -186,24 +177,24 @@ class Engine {
     destination: WriteableStream,
     logger: Logger,
   ) {
-    this.setUpQueries(abstractOperationObject);
+    this.#setUpQueries(abstractOperationObject);
     this.logger = logger;
 
     let canWriteToFile: boolean = true;
 
     for await (let line of source) {
-      if (this.isAComment(line)) {
+      if (this.#isAComment(line)) {
         canWriteToFile = false;
       } else {
-        const query = this.parseLine(line);
+        const query = this.#parseLine(line);
 
         if (query) {
-          canWriteToFile = this.apply(query);
+          canWriteToFile = this.#apply(query);
         } else if (this.cache?.columns) {
           /*
             Query data in progress
           */
-          line = this.transform(line);
+          line = this.#transform(line);
         }
       }
 
