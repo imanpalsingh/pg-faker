@@ -142,7 +142,11 @@ class Engine {
     if (Array.isArray(transformers)) {
       const [middleware, mapping] = transformers;
       const passedRecord = middleware(record, columns!);
-      maskedData = this.#declarativeTransformation(passedRecord, mapping);
+      if (passedRecord) {
+        maskedData = this.#declarativeTransformation(passedRecord, mapping);
+      } else {
+        maskedData = record;
+      }
     } else {
       maskedData = this.#declarativeTransformation(record, transformers!);
     }
