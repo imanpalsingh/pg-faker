@@ -6,7 +6,7 @@ import {
   VerbosityLevel,
   WriteableStream,
 } from '../../types/domain.js';
-import {queries} from '../pg/queries/index.js';
+import {indexOnQueries} from '../pg/queries/index.js';
 import {DataQuery} from '../pg/queries/abstracts/data-query.js';
 import {InfraQuery} from '../pg/queries/abstracts/infra-query.js';
 import {Query} from '../pg/queries/abstracts/query.js';
@@ -15,6 +15,7 @@ import {isEmptyObject} from '../utils/checkers.js';
 
 class Engine {
   queries!: Array<Query>;
+
   aoo!: AbstractOperationType['aoo'];
   logger!: Logger;
 
@@ -37,7 +38,6 @@ class Engine {
 
   #setUpQueries(payload: AbstractOperationType) {
     this.aoo = payload.aoo;
-    this.queries = queries;
   }
 
   #isAComment(line: string) {
@@ -45,10 +45,21 @@ class Engine {
   }
 
   #parseLine(line: string) {
-    const queryObj = this.queries.find((query) => query.match(line));
-    if (queryObj) {
-      queryObj.query = line;
-      return queryObj;
+    const firstChar = line[0];
+    if (firstChar >= '0' && firstChar <= '9') {
+      return null;
+    }
+
+    const [firstWord] = line.split(' ', 1);
+
+    if (firstWord in indexOnQueries) {
+      const queriesInScope = indexOnQueries[firstWord as keyof typeof indexOnQueries];
+
+      const queryObj = queriesInScope.find((query) => query.match(line));
+      if (queryObj) {
+        queryObj.query = line;
+        return queryObj;
+      }
     }
 
     return null;
