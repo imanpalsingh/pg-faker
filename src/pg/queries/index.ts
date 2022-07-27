@@ -14,15 +14,10 @@ import setQ from './set-q.js';
 import select from './select.js';
 import createIndex from './create-index.js';
 
-export const queries = [
-  alterSequence,
-  alterTableSequence,
-  alterTable,
-  copy,
-  createSequence,
-  createTable,
-  sequenceSet,
-  setQ,
-  select,
-  createIndex,
-];
+export const indexOnQueries = {
+  SET: [setQ],
+  SELECT: [sequenceSet, select],
+  CREATE: [createSequence, createTable, createIndex],
+  ALTER: [alterSequence, alterTableSequence, alterTable],
+  COPY: [copy],
+};

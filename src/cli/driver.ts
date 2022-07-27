@@ -12,7 +12,7 @@ class Driver {
     const importPath = join(process.cwd(), path);
     const {configuration}: {configuration: ConfigurationType} = await import(importPath);
     if (!configuration) {
-      gracefulShutdown(
+      throw new Error(
         // eslint-disable-next-line max-len
         `Configuration could not be found in ${importPath}. Make sure the js file exports object named 'configuration' `,
       );

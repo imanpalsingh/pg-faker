@@ -5,14 +5,12 @@ import {
   TableTypes,
   __TableOperationType,
 } from '../../types/domain.js';
-import {gracefulShutdown} from '../utils/handlers.js';
 import {Logger} from '../utils/logger.js';
 
 class Parser {
   validate(configuration: ConfigurationType) {
     if (!configuration.connectionUrl) {
-      gracefulShutdown('connectionUrl is missing, cannot connect to database without it');
-      return;
+      throw new Error('connectionUrl is missing, cannot connect to database without it');
     }
   }
 
@@ -42,7 +40,7 @@ class Parser {
           parsedTables[table] = 'SKIP:OUTPUT';
           break;
         default:
-          gracefulShutdown(`Unrecognized skipping method ${skipType}`);
+          throw new Error(`Unrecognized skipping method ${skipType}`);
       }
     }
 

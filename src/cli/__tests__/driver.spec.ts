@@ -9,8 +9,8 @@ describe('Driver', () => {
 
   it('raises an error and exits on missing configuration', async () => {
     const driver = new Driver();
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-    await driver.loadConfiguration('fixtures/imports/incorrect-config.js');
-    expect(mockExit).toBeCalled();
+    expect(async () => {
+      await driver.loadConfiguration('fixtures/imports/incorrect-config.js');
+    }).rejects.toThrowError();
   });
 });

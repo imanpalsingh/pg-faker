@@ -135,6 +135,56 @@ export const configuration = {
 
       will make sure that the dumped sql doesn't have any queries related to users table. This will override any other masking rules specified for this table.
 
+## Advanced
+
+If you need more flexibility with masking, such as conditional masking then you can use middleware.
+
+### Middleware
+
+Middleware in pgfaker allows you to access the record that is about to get transformed. You can modify the records here, or avoid the masking that is about to happen. The api looks like this
+
+```js
+export const configuration = {
+  connectionUrl: 'postgresql://USER:PASSWORD@HOST:PORT/DATABASE',
+
+  columns: {
+    description: (value) => 'This will not be used',
+  },
+
+  tables: {
+    users: [checkIfAdmin, maskingRules],
+  },
+};
+```
+
+Where `checkIfAdmin` is your middleware function and `maskingRules` is your regular object of transformers
+
+1. The `checkIfAdmin` function will receive the column values as first parameter and column names as the seconds
+
+   ```js
+   const checkIfAdmin = (columnValues, columnNames) => {
+     adminColumnIndex = columnNames.indexOf('admin');
+     isAdmin = columnValues[adminColumnIndex];
+
+     if (isAdmin === '1') {
+       return null;
+     }
+     return columnValues;
+   };
+   ```
+
+   Returning null (or any falsy value) from this function will result in any masking defined (read next point) for it to be avoided.
+
+2. The `maskingRules` is your regular object of transformers. This can be used if you want to regular way of defining transformers along with the middleware. Note that the `columns` transformers are also used here
+
+   ```js
+   const maskingRules = {
+     users: {
+       flag: (value) => 'off',
+     },
+   };
+   ```
+
 ## TroubleShooting
 
 Please refer and raise the issues on [github](https://github.com/imanpalsingh/pg-faker/issues).
