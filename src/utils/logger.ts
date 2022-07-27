@@ -42,7 +42,7 @@ class Logger {
   }
 
   skippedColumns(columns: string[]) {
-    this.#log(`Skipping Columns: ${chalk.yellow(columns)}`, VerbosityLevel.verbose);
+    this.#log(`Skipping Columns: ${chalk.red(columns)}`, VerbosityLevel.verbose);
   }
 
   transformedColumns(columns: string[]) {
