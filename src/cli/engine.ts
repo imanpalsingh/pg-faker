@@ -21,7 +21,7 @@ class Engine {
 
   cache!: EngineCache | null;
 
-  #shouldSkipMasking(tableName: string) {
+  shouldSkipMasking(tableName: string) {
     if (this.aoo.tables) {
       return this.aoo.tables[tableName] === 'SKIP:MASK';
     }
@@ -29,10 +29,11 @@ class Engine {
     return false;
   }
 
-  #shouldSkipOutput(tableName: string) {
+  shouldSkipOutput(tableName: string) {
     if (this.aoo.tables) {
       return this.aoo.tables[tableName] === 'SKIP:OUTPUT';
     }
+
     return false;
   }
 
@@ -40,11 +41,11 @@ class Engine {
     this.aoo = payload.aoo;
   }
 
-  #isAComment(line: string) {
+  isAComment(line: string) {
     return line.match(/^--.*/g);
   }
 
-  #parseLine(line: string) {
+  parseLine(line: string) {
     const firstChar = line[0];
     if (firstChar >= '0' && firstChar <= '9') {
       return null;
@@ -54,8 +55,8 @@ class Engine {
 
     if (firstWord in indexOnQueries) {
       const queriesInScope = indexOnQueries[firstWord as keyof typeof indexOnQueries];
-
       const queryObj = queriesInScope.find((query) => query.match(line));
+
       if (queryObj) {
         queryObj.query = line;
         return queryObj;
@@ -65,7 +66,7 @@ class Engine {
     return null;
   }
 
-  #canExecute(query: Query): boolean {
+  canExecute(query: Query): boolean {
     if (query instanceof InfraQuery) return true;
 
     /*
@@ -74,7 +75,7 @@ class Engine {
 
     const tableName = query.tableName;
 
-    if (this.#shouldSkipOutput(tableName)) {
+    if (this.shouldSkipOutput(tableName)) {
       this.logger.skipTableFromOutput(tableName);
       return false;
     }
@@ -83,7 +84,7 @@ class Engine {
   }
 
   #requiredTransformers(operations: ColumnTypes) {
-    if (this.#shouldSkipMasking(this.cache!.tableName)) {
+    if (this.shouldSkipMasking(this.cache!.tableName)) {
       this.logger.skipTableFromMasking(this.cache!.tableName);
       return null;
     } else {
@@ -101,7 +102,7 @@ class Engine {
   #apply(query: Query) {
     this.cache = {tableName: query.tableName};
 
-    if (!this.#canExecute(query)) return false;
+    if (!this.canExecute(query)) return false;
 
     if (query instanceof DataQuery) {
       this.logger.currentTable(query.tableName);
@@ -203,10 +204,10 @@ class Engine {
     let canWriteToFile: boolean = true;
 
     for await (let line of source) {
-      if (this.#isAComment(line)) {
+      if (this.isAComment(line)) {
         canWriteToFile = false;
       } else {
-        const query = this.#parseLine(line);
+        const query = this.parseLine(line);
 
         if (query) {
           canWriteToFile = this.#apply(query);
