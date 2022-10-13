@@ -19,13 +19,13 @@ describe('Parser', () => {
     }).toThrowError();
   });
 
-  it('returns empty abstraction object if no  rule are defined in configuration ', () => {
+  it('returns empty abstraction object if no rule are defined in configuration', () => {
     const parser = new Parser();
     const aoo = parser.parse(configWithUrl());
     expect(aoo).toEqual(emptyAOO());
   });
 
-  it('returns correct abstraction object if only options are defined ', () => {
+  it('returns correct abstraction object if only options are defined', () => {
     const parser = new Parser();
     const configuration: ConfigurationType = {
       ...configWithUrl(),
@@ -40,7 +40,7 @@ describe('Parser', () => {
     expect(aoo).toEqual(expectedAoo);
   });
 
-  it('returns correct abstraction object if only columns are defined ', () => {
+  it('returns correct abstraction object if only columns are defined', () => {
     const parser = new Parser();
     const configuration: ConfigurationType = {
       ...configWithUrl(),
@@ -55,7 +55,7 @@ describe('Parser', () => {
     expect(aoo).toEqual(expectedAoo);
   });
 
-  it('returns correct abstraction object if only tables are defined ', () => {
+  it('returns correct abstraction object if only tables are defined', () => {
     const parser = new Parser();
     const configuration: ConfigurationType = {
       ...configWithUrl(),
@@ -70,7 +70,7 @@ describe('Parser', () => {
     expect(aoo).toEqual(expectedAoo);
   });
 
-  it('returns correct abstraction object if only default transformer is defined ', () => {
+  it('returns correct abstraction object if only default transformer is defined', () => {
     const parser = new Parser();
     const configuration: ConfigurationType = {
       ...configWithUrl(),
