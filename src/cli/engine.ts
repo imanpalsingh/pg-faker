@@ -54,16 +54,14 @@ class Engine {
     const [firstWord] = line.split(' ', 1);
 
     if (firstWord in indexOnQueries) {
-      const queriesInScope =
-        indexOnQueries[firstWord as keyof typeof indexOnQueries];
-
+      const queriesInScope = indexOnQueries[firstWord as keyof typeof indexOnQueries];
       const queryObj = queriesInScope.find((query) => query.match(line));
 
       if (queryObj) {
         queryObj.query = line;
         return queryObj;
       }
-    };
+    }
 
     return null;
   }

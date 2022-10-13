@@ -83,27 +83,25 @@ describe('Engine', () => {
     expect(engine.canExecute(query)).toBeTruthy();
   });
 
-  describe('when table has SKIP:OUTPUT defined', () => {
-    it('does not execute the Query', () => {
-      const engine = new Engine();
+  it('determines if query can be executed', () => {
+    const engine = new Engine();
 
-      engine.aoo = {
-        tables: {
-          users: 'SKIP:OUTPUT',
-        },
-      };
+    engine.aoo = {
+      tables: {
+        users: 'SKIP:OUTPUT',
+      },
+    };
 
-      engine.logger = new Logger('verbose');
+    engine.logger = new Logger('verbose');
 
-      const queryToBeSkipped = new CreateTable();
-      queryToBeSkipped.query = 'CREATE TABLE public.users (';
+    const queryToBeSkipped = new CreateTable();
+    queryToBeSkipped.query = 'CREATE TABLE public.users (';
 
-      expect(engine.canExecute(queryToBeSkipped)).toBeFalsy();
+    expect(engine.canExecute(queryToBeSkipped)).toBeFalsy();
 
-      const queryToBeExecuted = new CreateTable();
-      queryToBeExecuted.query = 'CREATE TABLE public.orders (';
+    const queryToBeExecuted = new CreateTable();
+    queryToBeExecuted.query = 'CREATE TABLE public.orders (';
 
-      expect(engine.canExecute(queryToBeExecuted)).toBeTruthy();
-    });
+    expect(engine.canExecute(queryToBeExecuted)).toBeTruthy();
   });
 });
