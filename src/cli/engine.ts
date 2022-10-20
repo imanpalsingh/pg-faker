@@ -83,7 +83,7 @@ class Engine {
     return true;
   }
 
-  #requiredTransformers(operations: ColumnTypes) {
+  requiredTransformers(operations: ColumnTypes) {
     if (this.shouldSkipMasking(this.cache!.tableName)) {
       this.logger.skipTableFromMasking(this.cache!.tableName);
       return null;
@@ -111,14 +111,14 @@ class Engine {
 
       if (Array.isArray(tableOperations)) {
         const [middleware, transforms] = tableOperations;
-        const requiredTransformers = this.#requiredTransformers({
+        const requiredTransformers = this.requiredTransformers({
           ...transforms,
           ...this.aoo.columns,
         });
         this.cache.transformers = [middleware, requiredTransformers || {}];
       } else {
         tableOperations = {...(tableOperations as ColumnTypes), ...this.aoo.columns};
-        this.cache.transformers = this.#requiredTransformers(tableOperations);
+        this.cache.transformers = this.requiredTransformers(tableOperations);
       }
 
       if (this.logger.verbosityLevel < VerbosityLevel.silent) {
