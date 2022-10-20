@@ -105,7 +105,7 @@ describe('Engine', () => {
     expect(engine.canExecute(queryToBeExecuted)).toBeTruthy();
   });
 
-  it('determines if function requires transformer', () => {
+  it('returns correct transformers for a table', () => {
     const engine = new Engine();
 
     engine.aoo = {
@@ -129,7 +129,7 @@ describe('Engine', () => {
     expect(result!.id).toBeUndefined();
   });
 
-  it('returns null for empty operators when checking for requiredTransformers()', () => {
+  it('returns null if no transformers are defined', () => {
     const engine = new Engine();
 
     engine.aoo = {

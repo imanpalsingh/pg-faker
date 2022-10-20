@@ -111,11 +111,11 @@ class Engine {
 
       if (Array.isArray(tableOperations)) {
         const [middleware, transforms] = tableOperations;
-        const requiredTransformers = this.requiredTransformers({
+        const identifiedTransformers = this.requiredTransformers({
           ...transforms,
           ...this.aoo.columns,
         });
-        this.cache.transformers = [middleware, requiredTransformers || {}];
+        this.cache.transformers = [middleware, identifiedTransformers || {}];
       } else {
         tableOperations = {...(tableOperations as ColumnTypes), ...this.aoo.columns};
         this.cache.transformers = this.requiredTransformers(tableOperations);
