@@ -104,4 +104,47 @@ describe('Engine', () => {
 
     expect(engine.canExecute(queryToBeExecuted)).toBeTruthy();
   });
+
+  it('returns correct transformers for a table', () => {
+    const engine = new Engine();
+
+    engine.aoo = {
+      tables: {},
+    };
+
+    engine.cache ={
+      tableName: 'users',
+      columns: ['name', 'description', 'id'],
+    };
+
+    const operators = {
+      name: ()=>{},
+      description: ()=>{},
+    };
+
+    const result = engine.requiredTransformers(operators);
+
+    expect(result!.name).toEqual(operators.name);
+    expect(result!.description).toEqual(operators.description);
+    expect(result!.id).toBeUndefined();
+  });
+
+  it('returns null if no transformers are defined', () => {
+    const engine = new Engine();
+
+    engine.aoo = {
+      tables: {},
+    };
+
+    engine.cache ={
+      tableName: 'users',
+      columns: ['name', 'description', 'id'],
+    };
+
+    const operators = {};
+
+    const result = engine.requiredTransformers(operators);
+
+    expect(result).toBeNull();
+  });
 });
