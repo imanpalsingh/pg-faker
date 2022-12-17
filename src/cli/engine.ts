@@ -147,7 +147,7 @@ class Engine {
     return true;
   }
 
-  #transform(line: string) {
+  transform(line: string) {
     if (!(this.cache?.transformers || this.aoo.defaultTransformer)) return line;
     if (!line.trim() || line === `\\.`) return line;
 
@@ -160,18 +160,18 @@ class Engine {
       const [middleware, mapping] = transformers;
       const passedRecord = middleware(record, columns!);
       if (passedRecord) {
-        maskedData = this.#declarativeTransformation(passedRecord, mapping);
+        maskedData = this.declarativeTransformation(passedRecord, mapping);
       } else {
         maskedData = record;
       }
     } else {
-      maskedData = this.#declarativeTransformation(record, transformers!);
+      maskedData = this.declarativeTransformation(record, transformers!);
     }
 
     return maskedData.join(`\t`);
   }
 
-  #declarativeTransformation(record: string[], transformers: ColumnTypes): string[] {
+  declarativeTransformation(record: string[], transformers: ColumnTypes): string[] {
     const columns = this.cache?.columns;
     return record.map((value: String, index: number) => {
       if (transformers?.hasOwnProperty(columns![index])) {
@@ -215,7 +215,7 @@ class Engine {
           /*
             Query data in progress
           */
-          line = this.#transform(line);
+          line = this.transform(line);
         }
       }
 
