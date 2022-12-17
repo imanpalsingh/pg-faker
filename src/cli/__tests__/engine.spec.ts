@@ -147,4 +147,24 @@ describe('Engine', () => {
 
     expect(result).toBeNull();
   });
+
+  it('returns masked string', () => {
+    const engine = new Engine();
+
+    engine.aoo = {
+      tables: {},
+    };
+
+    engine.cache = {
+      tableName: 'users',
+      columns: ['name', 'description', 'id'],
+      transformers: {
+        description: () => 'This will be used',
+      },
+    };
+
+    const result = engine.transform(`Hello\tThis is coder\t3`);
+
+    expect(result).toEqual('Hello\tThis will be used\t3');
+  });
 });
