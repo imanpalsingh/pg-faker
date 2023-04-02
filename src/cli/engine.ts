@@ -99,7 +99,7 @@ class Engine {
     }
   }
 
-  #apply(query: Query) {
+  apply(query: Query) {
     this.cache = {tableName: query.tableName};
 
     if (!this.canExecute(query)) return false;
@@ -112,12 +112,12 @@ class Engine {
       if (Array.isArray(tableOperations)) {
         const [middleware, transforms] = tableOperations;
         const identifiedTransformers = this.requiredTransformers({
-          ...transforms,
           ...this.aoo.columns,
+          ...transforms,
         });
         this.cache.transformers = [middleware, identifiedTransformers || {}];
       } else {
-        tableOperations = {...(tableOperations as ColumnTypes), ...this.aoo.columns};
+        tableOperations = {...this.aoo.columns, ...(tableOperations as ColumnTypes)};
         this.cache.transformers = this.requiredTransformers(tableOperations);
       }
 
@@ -210,7 +210,7 @@ class Engine {
         const query = this.parseLine(line);
 
         if (query) {
-          canWriteToFile = this.#apply(query);
+          canWriteToFile = this.apply(query);
         } else if (this.cache?.columns) {
           /*
             Query data in progress
