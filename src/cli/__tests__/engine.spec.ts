@@ -1,5 +1,6 @@
 import {CreateTable} from '../../pg/queries/create-table';
 import {SetQ} from '../../pg/queries/set-q';
+import {Copy} from '../../pg/queries/copy';
 import {Logger} from '../../utils/logger';
 import {Engine} from '../engine';
 
@@ -112,14 +113,14 @@ describe('Engine', () => {
       tables: {},
     };
 
-    engine.cache ={
+    engine.cache = {
       tableName: 'users',
       columns: ['name', 'description', 'id'],
     };
 
     const operators = {
-      name: ()=>{},
-      description: ()=>{},
+      name: () => {},
+      description: () => {},
     };
 
     const result = engine.requiredTransformers(operators);
@@ -136,7 +137,7 @@ describe('Engine', () => {
       tables: {},
     };
 
-    engine.cache ={
+    engine.cache = {
       tableName: 'users',
       columns: ['name', 'description', 'id'],
     };
@@ -146,5 +147,52 @@ describe('Engine', () => {
     const result = engine.requiredTransformers(operators);
 
     expect(result).toBeNull();
+  });
+
+  it('gives table transformers more priority than column transformers', () => {
+    const engine = new Engine();
+    const queryObj = new Copy();
+    engine.logger = new Logger('info');
+
+    engine.aoo = {
+      tables: {
+        users: {
+          name: () => {},
+        },
+      },
+      columns: {
+        name: () => {},
+      },
+    };
+    queryObj.query = 'COPY public.users (name, email) FROM stdin;';
+
+    engine.apply(queryObj);
+
+    const selectedTransformers = engine.cache?.transformers;
+    expect(selectedTransformers).toEqual(engine.aoo.tables!.users);
+  });
+
+  describe('when using middleware', () => {
+    it('gives table transformers more priority than column transformers', () => {
+      const engine = new Engine();
+      const queryObj = new Copy();
+      const middleware = () => [];
+      engine.logger = new Logger('info');
+
+      engine.aoo = {
+        tables: {
+          users: [middleware, {name: () => {}}],
+        },
+        columns: {
+          name: () => {},
+        },
+      };
+      queryObj.query = 'COPY public.users (name, email) FROM stdin;';
+
+      engine.apply(queryObj);
+
+      const selectedTransformers = engine.cache?.transformers;
+      expect(selectedTransformers![-1]).toEqual(engine.aoo.tables!.users[-1]);
+    });
   });
 });
