@@ -1,5 +1,5 @@
 const configuration = {
-  connectionUrl: 'postgres//Somewhere',
+  connectionUrl: 'postgres//somewhere',
 };
 
 module.exports = {
